@@ -43,20 +43,31 @@ export function ShopClient({ products, category, query }: { products: Product[];
             </Link>
           )}
         </div>
-        <nav ref={chips} aria-label="Categories" className="relative rail hide-scrollbar mt-5 flex gap-2 overflow-x-auto pb-1 sm:mt-7">
-          {shopSections.map(section => (
-            <Link
-              key={section.id}
-              href={categoryHref(section.id)}
-              aria-current={!query && section.id === category ? "page" : undefined}
-              className={cn(
-                "press flex h-10 shrink-0 items-center rounded-full px-4 text-[14px] transition-colors",
-                !query && section.id === category ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#e8e8ed]"
-              )}
-            >
-              {section.name}
-            </Link>
-          ))}
+        {/* Beats-style tabs: bold text, grey until chosen, a 2px underline on the current one, one
+            hairline across the page. Centred when they fit; on phones they scroll from the left
+            (auto margins on the first and last tab collapse safely when the row overflows). */}
+        <nav
+          ref={chips}
+          aria-label="Categories"
+          className="relative hide-scrollbar mt-6 flex overflow-x-auto border-b border-line px-5 sm:mt-8 sm:px-8 [&>:first-child]:ml-auto [&>:last-child]:mr-auto"
+        >
+          {shopSections.map(section => {
+            const current = !query && section.id === category;
+            return (
+              <Link
+                key={section.id}
+                href={categoryHref(section.id)}
+                aria-current={current ? "page" : undefined}
+                className={cn(
+                  "press relative flex h-[52px] shrink-0 items-center px-3.5 text-[15px] font-semibold tracking-[-0.01em] transition-colors duration-200 sm:px-4 sm:text-[16px]",
+                  "after:absolute after:inset-x-3.5 after:-bottom-px after:h-[2px] after:rounded-full after:bg-ink after:opacity-0 after:transition-opacity after:duration-200 sm:after:inset-x-4",
+                  current ? "text-ink after:opacity-100" : "text-ink-soft hover:text-ink"
+                )}
+              >
+                {section.name}
+              </Link>
+            );
+          })}
         </nav>
       </header>
 
