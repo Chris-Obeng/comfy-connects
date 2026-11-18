@@ -111,13 +111,6 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
         </div>
       </header>
 
-      {/* Apple's ribbon: one line of what matters most, under the bar, scrolls away. */}
-      <div className="bg-mist">
-        <p className="container-shell flex min-h-10 items-center justify-center py-2 text-center text-[13px] leading-5 text-ink">
-          Free pickup in Koforidua and Kasoa. Delivery across Ghana.
-        </p>
-      </div>
-
       <Drawer isOpen={menu} onOpenChange={setMenu}>
         <Drawer.Backdrop>
           <Drawer.Content placement="left">
