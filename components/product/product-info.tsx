@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, MapPin, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useBagUI, useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
-import { whatsappHref } from "@/lib/config";
+import { pickup, site } from "@/lib/config";
 import { categoryName } from "@/data/categories";
 import { cn } from "@/lib/utils";
-import { WhatsAppIcon } from "@/components/shared/social-icons";
 import { QuantityStepper } from "@/components/shared/quantity-stepper";
 import type { Product } from "@/types";
 
@@ -21,6 +20,8 @@ function swatchTextColor(hex: string) {
 }
 
 const oneSize = (p: Product) => p.sizes.length === 1;
+/** "Size" by default; bags say Size, power banks say Capacity, straps say Strap. */
+const variantLabel = (p: Product) => p.variantLabel ?? "Size";
 
 /** Title block. Rendered above the gallery on phones (as Beats does), beside it on desktop. */
 export function ProductTitle({ product, className }: { product: Product; className?: string }) {
@@ -39,6 +40,9 @@ export function ProductTitle({ product, className }: { product: Product; classNa
 
 export function ProductInfo({ product }: { product: Product }) {
   const single = oneSize(product);
+  const label = variantLabel(product);
+  const labelLower = label.toLowerCase();
+  const hasColors = product.colors.length > 0;
   const [color, setColor] = useState(product.colors[0]?.name ?? "");
   // Garments and shoes start unselected: a wrong default size is worse than one extra tap.
   const [size, setSize] = useState(single ? product.sizes[0]?.name ?? "" : "");
@@ -71,7 +75,7 @@ export function ProductInfo({ product }: { product: Product }) {
     }
     const line = add(product, color, size, qty);
     if (!line) {
-      toast.error("That’s all we have", { description: "Your cart already holds every piece we have in this size." });
+      toast.error("That’s all we have", { description: "Your cart already holds every unit we have in this option." });
       return;
     }
     haptic("tap");
@@ -82,11 +86,10 @@ export function ProductInfo({ product }: { product: Product }) {
     timer.current = setTimeout(() => setAdded(false), 1600);
   }
 
-  const label = allSoldOut ? "Sold out" : added ? (
+  const ctaLabel = allSoldOut ? "Sold out" : added ? (
     <span className="flex items-center gap-2"><Check className="size-5" /> Added</span>
-  ) : !selectedSize ? "Select a size" : "Add to cart";
+  ) : !selectedSize ? `Select ${labelLower === "size" ? "a size" : labelLower}` : "Add to cart";
 
-  const ask = whatsappHref(`Hi Fashion Tap Boutik, I'm interested in the ${product.name} (${color}${single || !size ? "" : `, size ${size}`}).`);
 
   return (
     <>
@@ -97,38 +100,58 @@ export function ProductInfo({ product }: { product: Product }) {
             {formatPrice(product.price)}
           </p>
           {product.compareAtPrice && <s className="text-[15px] tabular-nums text-ink-faint">{formatPrice(product.compareAtPrice)}</s>}
+          {product.compareAtPrice && (
+            <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[12px] font-semibold text-ink">
+              Save {formatPrice(product.compareAtPrice - product.price)}
+            </span>
+          )}
         </div>
-
-        <div className="mt-7">
-          <p className="text-[14px]">
-            <span className="text-ink-soft">Colour:</span> <span className="font-semibold text-ink">{color}</span>
+        {allSoldOut && (
+          <p className="mt-3 flex items-center gap-1.5 text-[14px] font-medium text-ink-soft">
+            <span className="size-2 rounded-full bg-ink-faint" aria-hidden />
+            Sold out — ask us about the next delivery
           </p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {product.colors.map(c => (
-              <button
-                key={c.name}
-                type="button"
-                onClick={() => setColor(c.name)}
-                aria-label={c.name}
-                aria-pressed={color === c.name}
-                className={cn(
-                  "press flex size-12 items-center justify-center rounded-full",
-                  color === c.name ? "ring-2 ring-ink ring-offset-2" : "ring-1 ring-line hover:ring-ink/40"
-                )}
-              >
-                <span className="flex size-10 items-center justify-center rounded-full ring-1 ring-black/5" style={{ backgroundColor: c.hex }}>
-                  {color === c.name && <Check className="size-4" style={{ color: swatchTextColor(c.hex) }} />}
-                </span>
-              </button>
-            ))}
+        )}
+
+        {hasColors && (
+          <div className="mt-7">
+            <p className="text-[14px] text-ink-soft" id="colour-label">Colour:</p>
+            <div role="group" aria-labelledby="colour-label" className="mt-2.5 flex flex-wrap gap-2.5">
+              {product.colors.map(c => {
+                const selected = color === c.name;
+                return (
+                  <button
+                    key={c.name}
+                    type="button"
+                    onClick={() => setColor(c.name)}
+                    aria-pressed={selected}
+                    className={cn(
+                      "press flex h-11 items-center gap-2.5 rounded-full border pr-3.5 pl-2 text-[14px]",
+                      selected
+                        ? "border-ink bg-mist font-semibold text-ink"
+                        : "border-line text-ink hover:border-ink/40"
+                    )}
+                  >
+                    <span
+                      className="flex size-6 items-center justify-center rounded-full ring-1 ring-black/10"
+                      style={{ backgroundColor: c.hex }}
+                      aria-hidden
+                    >
+                      {selected && <Check className="size-3.5" strokeWidth={3} style={{ color: swatchTextColor(c.hex) }} />}
+                    </span>
+                    {c.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {!single && (
           <div ref={sizesRef} className="mt-7 scroll-mt-24">
             <p className="text-[14px]" id="size-label">
-              <span className="text-ink-soft">Size:</span>{" "}
-              <span className={cn("font-semibold", needSize ? "text-brand" : "text-ink")}>{size || (needSize ? "Choose your size" : "Choose")}</span>
+              <span className="text-ink-soft">{label}:</span>{" "}
+              <span className={cn("font-semibold", needSize ? "text-brand" : "text-ink")}>{size || (needSize ? `Choose your ${labelLower}` : "Choose")}</span>
             </p>
             <div
               key={nudge}
@@ -170,28 +193,37 @@ export function ProductInfo({ product }: { product: Product }) {
           </div>
         )}
 
-        <div className="mt-8 hidden gap-2.5 md:grid">
+        <div className="mt-8 hidden md:block">
           <button type="button" onClick={addToBag} disabled={allSoldOut} className="btn btn-primary btn-caps w-full">
-            {label}
+            {ctaLabel}
           </button>
-          <a href={ask} target="_blank" rel="noreferrer" className="btn btn-outline w-full">
-            <WhatsAppIcon className="size-[18px] text-[#25d366]" /> Ask about this piece
-          </a>
         </div>
-        <a href={ask} target="_blank" rel="noreferrer" className="btn btn-outline mt-7 w-full md:hidden">
-          <WhatsAppIcon className="size-[18px] text-[#25d366]" /> Ask about this piece
-        </a>
+
+        <ul role="list" className="mt-8 grid gap-3 rounded-[20px] bg-mist p-4">
+          <li className="flex items-start gap-3">
+            <MapPin className="mt-0.5 size-[18px] shrink-0 text-ink" aria-hidden />
+            <span className="text-[14px] leading-6 text-ink/75">
+              <strong className="font-semibold text-ink">Free pickup.</strong> {pickup.eta} in {site.stores.map(x => x.name).join(" or ")}.
+            </span>
+          </li>
+          <li className="flex items-start gap-3">
+            <Truck className="mt-0.5 size-[18px] shrink-0 text-ink" aria-hidden />
+            <span className="text-[14px] leading-6 text-ink/75">
+              <strong className="font-semibold text-ink">Delivery nationwide.</strong> Same or next day in Koforidua and Kasoa, 2–4 days elsewhere.
+            </span>
+          </li>
+        </ul>
       </div>
 
       {/* Phones: Beats-style floating buy bar */}
       <div data-sticky-cta className="translucent safe-bottom fixed inset-x-0 bottom-0 z-30 border-t border-line/70 bg-white/90 px-4 pt-3 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] text-ink-soft">{[color, !single && size ? `Size ${size}` : null].filter(Boolean).join(" · ") || product.name}</p>
+            <p className="truncate text-[13px] text-ink-soft">{[color, !single && size ? `${label} ${size}` : null].filter(Boolean).join(" · ") || product.name}</p>
             <p className={cn("text-[18px] tabular-nums", product.compareAtPrice ? "text-sale" : "text-ink")}>{formatPrice(product.price)}</p>
           </div>
           <button type="button" onClick={addToBag} disabled={allSoldOut} className="btn btn-primary btn-caps min-w-[176px]">
-            {label}
+            {ctaLabel}
           </button>
         </div>
       </div>

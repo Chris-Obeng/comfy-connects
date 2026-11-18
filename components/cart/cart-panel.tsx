@@ -11,7 +11,7 @@ import { formatPrice } from "@/lib/format";
 import type { CartItem } from "@/types";
 
 function variantLine(item: CartItem) {
-  return [item.color, item.size !== "One size" ? `Size ${item.size}` : null].filter(Boolean).join(" · ");
+  return [item.color, item.size !== "Standard" ? item.size : null].filter(Boolean).join(" · ");
 }
 
 export function CartPanel() {
@@ -35,7 +35,10 @@ export function CartPanel() {
         <span className="text-[15px] text-ink-soft">Subtotal</span>
         <span className="text-[20px] font-semibold tracking-[-0.01em] tabular-nums text-ink">{formatPrice(subtotal)}</span>
       </div>
-      <Link href="/checkout" onClick={() => setOpen(false)} className={buttonClass({ size: "lg", caps: true, className: "mt-4 w-full" })}>
+      <p className="mt-2 text-[13px] leading-5 text-ink-soft">
+        Free pickup in Koforidua or Kasoa. Delivery is added at checkout.
+      </p>
+      <Link href="/checkout" onClick={() => setOpen(false)} className={buttonClass({ size: "lg", caps: true, className: "mt-3 w-full" })}>
         <Lock className="size-4" aria-hidden /> Checkout
       </Link>
     </div>

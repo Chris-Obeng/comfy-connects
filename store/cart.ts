@@ -17,7 +17,8 @@ export const useCart = create<CartState>()(persist((set, get) => ({
   items: [],
   add: (product, color, size, quantity) => {
     const maxStock = product.sizes.find(s => s.name === size)?.stock ?? 0;
-    if (!product.colors.some(c => c.name === color) || !Number.isInteger(quantity) || quantity < 1) return null;
+    // Colour is optional on catalogues that ship one finish (most gadgets here).
+    if ((product.colors.length > 0 && !product.colors.some(c => c.name === color)) || !Number.isInteger(quantity) || quantity < 1) return null;
     const key = `${product.id}:${color}:${size}`;
     const existing = get().items.find(i => i.key === key);
     if ((existing?.quantity ?? 0) + quantity > maxStock) return null;
@@ -40,9 +41,9 @@ export const useCart = create<CartState>()(persist((set, get) => ({
   updateQuantity: (key, quantity) => set(s => ({ items: s.items.map(i => i.key === key ? { ...i, quantity: Math.max(1, Math.min(i.maxStock, Math.floor(quantity) || 1)) } : i) })),
   clear: () => set({ items: [] }),
 }), {
-  name: "fashion-tap-bag",
-  // v3: catalogue ids changed (source-prefixed). Older bags point at products that no longer exist.
-  version: 3,
+  name: "comfy-connects-cart",
+  // v4: the catalogue changed completely from the fashion build.
+  version: 4,
   migrate: () => ({ items: [] }) as unknown as CartState,
   skipHydration: true,
 }));

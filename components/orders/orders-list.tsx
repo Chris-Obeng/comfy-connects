@@ -8,10 +8,11 @@ import { formatOrderDate, getOrders, subscribeOrders } from "@/lib/orders";
 import { formatPrice } from "@/lib/format";
 import { buttonClass } from "@/lib/button-class";
 
+const EMPTY_ORDERS: never[] = [];
 const emptySubscribe = () => () => {};
 
 export function OrdersList() {
-  const orders = useSyncExternalStore(subscribeOrders, getOrders, () => []);
+  const orders = useSyncExternalStore(subscribeOrders, getOrders, () => EMPTY_ORDERS);
   const hydrated = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   if (!hydrated) {

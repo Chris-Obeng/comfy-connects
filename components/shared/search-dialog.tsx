@@ -12,10 +12,10 @@ import { ProductThumb } from "@/components/shared/product-thumb";
 import type { SearchItem } from "@/types";
 
 const MAX_RESULTS = 6;
-const POPULAR = ["Gowns", "Heels", "Handbags", "Clutches", "Purses", "Polos"];
+const POPULAR = ["Power bank", "Backpack", "Smart glasses", "Watch", "Charger", "Laptop"];
 
 /* Recent searches: a few terms in localStorage, read through a stable snapshot. */
-const RECENT_KEY = "fashion-tap-recent-searches";
+const RECENT_KEY = "comfy-connects-recent-searches";
 const recentListeners = new Set<() => void>();
 let recentCache: { raw: string | null; list: string[] } = { raw: null, list: [] };
 function readRecent(): string[] {
@@ -90,7 +90,6 @@ function SearchPanel({ items, onClose }: { items: SearchItem[]; onClose: () => v
     () => (q ? categories.filter(c => c.name.toLowerCase().includes(q.toLowerCase()) || all.some(i => i.category === c.id)).slice(0, 4) : []),
     [q, all]
   );
-  const trending = useMemo(() => items.filter(i => i.isNew).slice(0, 4), [items]);
 
   function setQ(value: string) { setQuery(value); setActive(-1); }
 
@@ -128,7 +127,7 @@ function SearchPanel({ items, onClose }: { items: SearchItem[]; onClose: () => v
             ref={inputRef}
             value={query}
             onChange={e => setQ(e.target.value)}
-            placeholder="Search dresses, heels, bags…"
+            placeholder="Search power banks, bags, glasses…"
             role="combobox"
             aria-expanded={results.length > 0}
             aria-controls={listId}
@@ -183,31 +182,14 @@ function SearchPanel({ items, onClose }: { items: SearchItem[]; onClose: () => v
               </div>
             </section>
             <section>
-              <h2 className="text-[13px] font-semibold text-ink-soft">Shop by category</h2>
-              <ul className="hide-scrollbar -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 sm:-mx-5 sm:px-5">
+              <h2 className="text-[13px] font-semibold text-ink-soft">Browse</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
                 {categories.map(c => (
-                  <li key={c.id} className="shrink-0">
-                    <Link href={categoryHref(c.id)} onClick={onClose} className="press flex w-[84px] flex-col items-center gap-2">
-                      <ProductThumb src={c.image} tint={c.tint} cutout={c.cutout} sizes="84px" className="size-[84px] rounded-[20px]" />
-                      <span className="text-center text-[12px] font-semibold leading-4 text-ink">{c.name}</span>
-                    </Link>
-                  </li>
+                  <Link key={c.id} href={categoryHref(c.id)} onClick={onClose} className="btn btn-soft btn-sm">
+                    {c.name}
+                  </Link>
                 ))}
-              </ul>
-            </section>
-            <section>
-              <h2 className="text-[13px] font-semibold text-ink-soft">New this week</h2>
-              <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {trending.map(item => (
-                  <li key={item.slug}>
-                    <button type="button" onClick={() => openProduct(item.slug)} className="press block w-full text-left">
-                      <ProductThumb src={item.image} tint={item.tint} cutout={item.cutout} sizes="160px" className="aspect-square w-full rounded-[18px]" />
-                      <span className="mt-2 block truncate text-[13px] font-semibold text-ink">{item.name}</span>
-                      <span className="block text-[13px] text-ink-soft">{formatPrice(item.price)}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              </div>
             </section>
           </div>
         ) : results.length ? (

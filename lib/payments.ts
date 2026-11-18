@@ -19,5 +19,5 @@ export type PaymentResult = { success: boolean; reference: string };
 export async function initiatePayment(order: Order): Promise<PaymentResult> {
   void order;
   await new Promise(resolve => setTimeout(resolve, 1100));
-  return { success: true, reference: `FTB-${Date.now().toString(36).toUpperCase()}` };
+  return { success: true, reference: `CC-${Date.now().toString(36).toUpperCase()}` };
 }

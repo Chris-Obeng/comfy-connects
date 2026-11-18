@@ -31,7 +31,7 @@ export function ShopClient({ products, category, query }: { products: Product[];
             <X className="size-4" aria-hidden /> Clear search
           </Link>
         )}
-        <nav aria-label="Categories" className="hide-scrollbar -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
+        <nav aria-label="Categories" className="hide-scrollbar edge-fade -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
           {shopSections.map(section => (
             <Link
               key={section.id}
@@ -50,7 +50,7 @@ export function ShopClient({ products, category, query }: { products: Product[];
 
       <div className="container-shell mt-6 flex items-center justify-between">
         <p className="text-[14px] text-ink-soft" aria-live="polite">
-          {visible.length} {visible.length === 1 ? "piece" : "pieces"}
+          {visible.length} {visible.length === 1 ? "gadget" : "gadgets"}
         </p>
         <Select
           aria-label="Sort products"
@@ -84,7 +84,7 @@ export function ShopClient({ products, category, query }: { products: Product[];
         {visible.length === 0 && (
           <div className="rounded-[28px] bg-mist px-6 py-16 text-center">
             <p className="text-[19px] font-semibold text-ink">Nothing matches that yet</p>
-            <p className="mx-auto mt-2 max-w-[34ch] text-[15px] text-ink-soft">Try a shorter word like “bag” or “heels”, or ask us on WhatsApp and we’ll find it for you.</p>
+            <p className="mx-auto mt-2 max-w-[34ch] text-[15px] text-ink-soft">Try a shorter word like “bag” or “charger”, or ask us on WhatsApp and we’ll find it for you.</p>
             <Link href="/shop" className="btn btn-primary mt-6">Browse everything</Link>
           </div>
         )}

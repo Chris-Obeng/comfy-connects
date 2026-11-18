@@ -1,18 +1,22 @@
 /**
- * Client-friendly product search: tokenised prefix matching with fashion synonyms,
+ * Client-friendly product search: tokenised prefix matching with gadget synonyms,
  * ranked so name matches beat category/colour/description matches. Pure functions,
  * shared by the search dialog and the /shop?q= results page.
  */
 
 /** Words that should find each other. Each group is matched in both directions. */
 const SYNONYMS: string[][] = [
-  ["bag", "bags", "handbag", "handbags", "tote", "purse", "purses", "clutch", "clutches", "hobo", "backpack"],
-  ["shoe", "shoes", "heels", "heel", "pumps", "pump", "stiletto", "stilettos", "sneakers", "sneaker", "trainers", "boots", "boot", "sandals", "mary", "janes"],
-  ["dress", "dresses", "gown", "gowns", "frock"],
-  ["shirt", "shirts", "top", "tops", "tee", "tshirt", "t-shirt", "polo"],
-  ["trousers", "pants", "chinos", "khaki"],
-  ["women", "womens", "ladies", "her"],
-  ["men", "mens", "him", "gents"],
+  ["bag", "bags", "backpack", "backpacks", "rucksack", "tote", "totebag", "crossbody", "sling", "sleeve", "pouch", "laptopbag"],
+  ["power", "powerbank", "bank", "charger", "charging", "battery", "adapter", "fastcharge", "mah", "port", "cable"],
+  ["glasses", "glass", "eyewear", "sunglasses", "smartglasses", "ai", "camera"],
+  ["watch", "watches", "smartwatch", "band", "wearable", "tracker"],
+  ["stand", "holder", "mount", "magstand", "desk", "foldable", "magnetic"],
+  ["laptop", "laptops", "macbook", "notebook", "computer"],
+  ["phone", "phones", "smartphone", "iphone", "android", "samsung", "mobile"],
+  ["tablet", "tablets", "ipad", "pad"],
+  ["earbuds", "airpods", "headphones", "earphones", "audio", "speaker", "sound"],
+  ["wiwu", "warriors"],
+  ["accessory", "accessories", "gadget", "gadgets", "tech"],
 ];
 
 const synonymMap = new Map<string, string[]>();

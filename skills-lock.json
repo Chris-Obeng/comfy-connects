@@ -109,6 +109,13 @@
       "skillPath": "skills/review-animations/SKILL.md",
       "computedHash": "7d23a794b6cb0191a68485b87d546adc9bb5ea93aa4168b299e2fefeea940790"
     },
+    "unslop": {
+      "source": "theclaymethod/unslop",
+      "commit": "0f4a07f5ca8bb400b4d4450b00d67c6e4a30b85a",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "f1d4ca019fae9b2ff9ebe53a7a5c576525bf1810ae829d3d8b22146359b76aef"
+    },
     "write-swift": {
       "source": "emilkowalski/skills",
       "sourceType": "github",

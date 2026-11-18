@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "sync:products": "node --env-file-if-exists=.env.local scripts/sync-products.mjs"
+    "sync:catalog": "node scripts/sync-demo-catalog.mjs"
   },
   "dependencies": {
     "@heroui/react": "^3.2.7",

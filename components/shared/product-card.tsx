@@ -18,7 +18,7 @@ export function ProductCard({
   const isSoldOut = soldOut(product);
   const isNew = product.tags.includes("new");
   const href = `/product/${product.slug}`;
-  const fit = product.cutout ? "object-contain p-[11%]" : "object-cover object-[50%_20%]";
+  const fit = product.cutout ? "object-contain p-[8%]" : "object-cover object-[50%_20%]";
   return (
     <article className="group relative min-w-0">
       <div
@@ -49,13 +49,6 @@ export function ProductCard({
         {(product.compareAtPrice || isSoldOut) && (
           <span className="absolute left-3 top-3 rounded-md bg-white/90 px-2 py-1 text-[12px] leading-none text-ink">
             {isSoldOut ? "Sold out" : "Sale"}
-          </span>
-        )}
-        {product.colors.length > 1 && (
-          <span className="absolute bottom-3 left-3 flex gap-1.5">
-            {product.colors.map(c => (
-              <span key={c.name} className="size-3 rounded-full ring-1 ring-black/10" style={{ backgroundColor: c.hex }} />
-            ))}
           </span>
         )}
       </div>

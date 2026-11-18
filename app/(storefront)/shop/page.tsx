@@ -4,9 +4,9 @@ import { shopSections, type ShopCategoryId } from "@/data/categories";
 import { ShopClient } from "@/components/shop/shop-client";
 
 export const metadata: Metadata = {
-  title: "Shop",
+  title: "Shop all gadgets",
   description:
-    "Shop luxury T-shirts, polos, shirts, gowns, dresses, shoes, bags, purses and clutches from Fashion Tap Boutik. Delivered across Ghana.",
+    "Shop backpacks, totes, crossbody bags, laptop sleeves, power banks, smart glasses, watches, stands and devices from Comfy Connects. Delivered across Ghana.",
 };
 
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {

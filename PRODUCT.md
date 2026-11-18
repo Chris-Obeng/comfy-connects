@@ -1,46 +1,48 @@
+# PRODUCT.md
+
 # Product
 
 <!-- impeccable:product-schema 1 -->
 
 ## Platform
 
-web (mobile first; most shoppers arrive from TikTok on a phone)
+web (mobile first; almost every shopper arrives from TikTok on a phone)
 
 ## Users
 
-Shoppers in Accra and across Ghana who follow Fashion Tap Boutik on TikTok and want to buy a piece they saw, quickly, on their phone. They know the store, trust it, and want a fast path from "I like that" to "it's in my bag".
+Shoppers in Ghana who follow Comfy Connects on TikTok (@comfyconnects, 17.9K followers) and want to buy a gadget they saw in a video. They are price-aware, they compare against other Accra gadget shops, and they want to know one thing fast: is it in stock, what does it cost, and how soon can I have it.
 
 ## Product Purpose
 
-The online storefront for Fashion Tap Boutik, an Accra boutique selling shoes, bags, clothes, purses, clutches and T-shirts. It delivers nationwide across Ghana. Success: a shopper finds a piece, picks a size or colour and checks out (delivery anywhere in Ghana, or free pickup in store) with as few taps as possible.
+The online storefront for Comfy Connects, an electronics and accessories shop with two branches: Koforidua (Antarctic Plaza, Shop 11) and Kasoa (Official Town, near JD). Success: a shopper finds a gadget, understands the price and delivery, and checks out with as few taps as possible — delivered nationwide, or collected free from either shop.
 
 ## Positioning
 
-A small, personal Accra boutique with a 54K-follower TikTok audience, presented with the polish of a global luxury retailer. The store wants its catalogue shown as luxury product (owner direction).
+A two-shop Ghanaian gadget dealer with a real TikTok audience, presented with the calm and precision of a global electronics retailer. Real brands (WiWU, LENYES, Phone Planet, S2 Max), real prices in cedis, real stock counts.
 
 ## Capabilities and Constraints
 
-- Frontend only for now. Supabase backend and an admin dashboard come later; `lib/products.ts` and `lib/payments.ts` are the seams to swap.
-- Products are placeholder data from SceneSKU and DummyJSON (`data/curation.json` + `data/scenesku.json` + `data/dummyjson.json`, synced by `pnpm sync:products`). Prices, stock and delivery fees are illustrative, not real store values.
-- Delivery is nationwide: Greater Accra by area (same or next day), other regions by courier (2–4 working days), plus free pickup in store (address shared on WhatsApp; not yet published).
-- Some DummyJSON renders show third-party brand marks (e.g. a tote plate). They are demo placeholders only and must be replaced with the store's own photos before launch.
-- Guest checkout only: delivery across Accra areas or pickup, Paystack (card / Mobile Money) mocked.
-- Keep it simple: no accounts, wishlists, reviews or other extra features unless asked.
+- Frontend only. Guest checkout: no accounts, wishlists or reviews. `lib/payments.ts` is the mock Paystack seam; `lib/orders.ts` keeps order history in localStorage.
+- Catalogue: `data/core-products.ts` holds the shop's own line-up with per-product stock. Every photo is the manufacturer's own studio shot downloaded into `public/products/<slug>/`.
+- A second, clearly labelled demo shelf (`data/demo-catalog.json`, DummyJSON via `lib/catalog/demo-api.ts`, refreshed with `pnpm sync:catalog`) fills the "Laptops & phones" tab only. It never appears on the homepage or in "All".
+- Prices are integer pesewas (100 pesewas = GH₵1). Store prices come from the shop's own TikTok captions where a caption quoted one; the rest are set to local retail, editable in one file.
+- Delivery: same or next day in Koforidua and Kasoa, 2–4 days by courier elsewhere. Fees live in `lib/config.ts`.
+- Keep it simple. No feature ships unless it shortens the path from "I saw this" to "it's in my cart".
 
 ## Brand Commitments
 
-- Name: Fashion Tap Boutik, Accra, Ghana. The logo artwork reads "Fashion Tap BOUTIQUE" (figure in a polka-dot dress, pink script). Source: TikTok avatar, processed into `public/brand/logo.png`, `logo-light.png`, `app/icon.png`.
-- Brand pink from the logo (#E5087F; #D4006F for text).
-- Verified channels: TikTok [@fashiontapboutik](https://www.tiktok.com/@fashiontapboutik), WhatsApp 024 944 6921 (from the TikTok bio). Instagram [@fashion_tap_boutik](https://www.instagram.com/fashion_tap_boutik/) and [Facebook](https://www.facebook.com/p/Fashion-Tap-Boutique-100065018320292/) confirmed by the owner.
-- Visual reference pinned by the owner: beatsbydre.com and apple.com (clean, image-led, generous, very little text).
+- Name: Comfy Connects. Tagline in use: "Your gadget plug."
+- Logo: the shop's own mark — mint tile, charcoal C, small red mark — in `public/logo.jpeg` (plus `app/icon.png`, `app/apple-icon.png`, generated from it). Never redraw it.
+- Verified channels: TikTok https://www.tiktok.com/@comfyconnects, WhatsApp / call 059 139 1901.
+- Two shops, both named on the homepage, footer and checkout pickup step.
 
 ## Evidence on Hand
 
-No real product photography, testimonials, reviews or press yet. Do not invent them.
+Manufacturer studio photography for every product; the shop's own prices from its TikTok captions for the Warriors X Pro (GH₵850), Hybrid Max (GH₵400), S2 Max glasses (GH₵550) and the phone stand (GH₵250). No reviews, testimonials or press — do not invent them.
 
 ## Product Principles
 
-1. Fewer words, bigger pictures. Every line of copy must earn its place.
+1. Fewer words, bigger pictures.
 2. One obvious next action per screen.
-3. Thumb-first: every primary control is reachable and at least 44px on a phone.
-4. Trust through clarity: prices, delivery fees and returns are plain and visible before payment.
+3. Thumb first: primary controls at least 44px and within reach on a phone.
+4. Trust through clarity: price, stock, delivery fee and pickup point are visible before payment.

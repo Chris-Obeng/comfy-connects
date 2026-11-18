@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) return { title: "Piece not found" };
+  if (!product) return { title: "Gadget not found" };
   return {
     title: product.name,
     description: product.description,
@@ -46,7 +46,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
           <li><Link href={categoryHref(product.category)} className="hover:text-ink">{categoryName(product.category)}</Link></li>
         </ol>
       </nav>
-      <div className="container-shell grid gap-6 md:grid-cols-[1.15fr_.85fr] md:gap-12 md:pt-5 lg:gap-16">
+      <div className="container-shell grid gap-6 pb-28 md:grid-cols-[1.15fr_.85fr] md:gap-12 md:pb-0 md:pt-5 lg:gap-16">
         <ProductTitle product={product} className="pt-5 md:hidden" />
         <ProductGallery images={product.images} name={product.name} tint={product.tint} cutout={product.cutout} />
         <ProductInfo product={product} />

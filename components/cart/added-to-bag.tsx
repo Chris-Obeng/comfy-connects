@@ -79,7 +79,7 @@ export function AddedToBag() {
                   </p>
                   <p className="mt-1 truncate text-[15px] font-semibold text-ink">{item.name}</p>
                   <p className="mt-0.5 text-[13px] text-ink-soft">
-                    {[item.color, item.size !== "One size" ? item.size : null].filter(Boolean).join(" · ")} · {formatPrice(item.price)}
+                    {[item.color, item.size !== "Standard" ? item.size : null].filter(Boolean).join(" · ")} · {formatPrice(item.price)}
                   </p>
                 </div>
                 <button

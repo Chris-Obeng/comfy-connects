@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type Props = { images: string[]; name: string; tint: string; cutout: boolean };
 
 // Photos are framed 4:5 with the focal point high, so heads stay in frame; renders sit square on the tint.
-const fitFor = (cutout: boolean) => (cutout ? "object-contain p-[10%]" : "object-cover object-[50%_20%]");
+const fitFor = (cutout: boolean) => (cutout ? "object-contain p-[7%]" : "object-cover object-[50%_20%]");
 const frame = (cutout: boolean) => (cutout ? "aspect-square" : "aspect-[4/5]");
 // Studio shots and renders multiply into the tint (white haze disappears); lifestyle photos stay as shot.
 const studio = (cutout: boolean, i: number) => (cutout || i === 0 ? "" : undefined);
@@ -163,7 +163,7 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
             <Expand className="size-4" aria-hidden />
           </span>
         </button>
-        <div className="mt-3 grid grid-cols-8 gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {images.map((src, i) => (
             <button
               key={src}
@@ -172,12 +172,12 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
               aria-label={`Show image ${i + 1}`}
               aria-pressed={active === i}
               className={cn(
-                "tint-media press relative aspect-square overflow-hidden rounded-xl",
+                "tint-media press relative size-[76px] shrink-0 overflow-hidden rounded-xl",
                 active === i ? "ring-2 ring-ink ring-offset-2" : "opacity-70 hover:opacity-100"
               )}
               style={style}
             >
-              <Image src={src} alt="" data-studio={studio(cutout, i)} fill sizes="90px" className={cutout ? "object-contain p-1.5" : "object-cover object-[50%_20%]"} />
+              <Image src={src} alt="" data-studio={studio(cutout, i)} fill loading="eager" sizes="90px" className={cutout ? "object-contain p-1.5" : "object-cover object-[50%_20%]"} />
             </button>
           ))}
         </div>

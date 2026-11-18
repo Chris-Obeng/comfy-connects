@@ -4,30 +4,32 @@ import "./globals.css";
 import { CartHydrator } from "@/components/shared/cart-hydrator";
 import { Toaster } from "@/components/ui/sonner";
 import { editorial } from "@/data/categories";
+import { site } from "@/lib/config";
 
-// Closest open face to Beats' Neuzeit Grotesk: geometric grotesk, calm at regular weight.
+// Closest open face to the grotesks Apple and Beats use: geometric, calm at regular weight.
 const sans = Hanken_Grotesk({ variable: "--font-sans-face", subsets: ["latin", "latin-ext"], display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fashiontapboutik.com"),
+  metadataBase: new URL("https://comfyconnects.shop"),
   title: {
-    default: "Fashion Tap Boutik · Accra",
-    template: "%s · Fashion Tap Boutik",
+    default: "Comfy Connects · Gadgets in Koforidua & Kasoa",
+    template: "%s · Comfy Connects",
   },
   description:
-    "Clothes, T-shirts, shoes, bags, purses and clutches from Fashion Tap Boutik in Agbogba, Accra. Delivered nationwide across Ghana. Pay with Mobile Money or card.",
+    "Electronic gadgets and accessories from Comfy Connects: bags and sleeves, power banks, smart glasses, watches and stands. Two shops in Ghana, delivered nationwide. Pay with Mobile Money or card.",
+  applicationName: site.name,
   openGraph: {
-    title: "Fashion Tap Boutik",
-    description: "Luxury pieces, delivered across Ghana.",
-    siteName: "Fashion Tap Boutik",
+    title: "Comfy Connects",
+    description: "Gadgets and accessories, delivered across Ghana.",
+    siteName: site.name,
     locale: "en_GH",
     type: "website",
-    images: [{ url: editorial.og.src, width: 1400, height: 2100, alt: editorial.og.alt }],
+    images: [{ url: editorial.hero.panels[0].src, width: 1024, height: 1024, alt: editorial.hero.panels[0].alt }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fashion Tap Boutik",
-    description: "Luxury pieces, delivered across Ghana.",
+    title: "Comfy Connects",
+    description: "Gadgets and accessories, delivered across Ghana.",
   },
 };
 

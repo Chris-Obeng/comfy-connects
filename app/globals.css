@@ -22,8 +22,8 @@
 
 /* ------------------------------------------------------------------------------------------------
  * Design tokens. Unlayered, so these win over HeroUI's @layer base defaults.
- * White canvas and Beats-gray sections; colour comes from each product's own field
- * (see .tint-media) plus the logo's pink as the one brand accent: "new", badges, focus.
+ * Apple/Beats grammar: a white canvas, big grey fields, one deep red accent taken from
+ * the logo, and colour that comes from the products themselves (see .tint-media).
  * ---------------------------------------------------------------------------------------------- */
 :root {
   /* Motion: custom curves, never the built-in easings */
@@ -39,8 +39,9 @@
   --ink-soft: #595959;
   --ink-faint: #8a8a8a;
   --line: #e2e2e2;
-  --brand: #d4006f;
-  --brand-soft: #fde8f2;
+  /* The logo's own deep red, used once per screen. */
+  --brand: #982427;
+  --brand-soft: #eefceb;
   --sale: #c4161c;
 
   /* HeroUI semantic tokens */
@@ -130,7 +131,7 @@
   }
 
   ::selection {
-    background: var(--brand-soft);
+    background: #eefceb;
     color: var(--ink);
   }
 
@@ -340,6 +341,13 @@
 
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Soft edge on horizontal scrollers so the next item reads as "more", not "cut off". */
+  @media (max-width: 1023px) {
+    .edge-fade {
+      mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    }
   }
 
   /* 16px fields stop iOS from zooming on focus. */

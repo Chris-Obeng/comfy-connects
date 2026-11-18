@@ -7,7 +7,7 @@ import { Check } from "lucide-react";
 import { Skeleton } from "@heroui/react";
 import { getOrder, subscribeOrders } from "@/lib/orders";
 import { formatPrice } from "@/lib/format";
-import { site } from "@/lib/config";
+import { findBranch, site } from "@/lib/config";
 import { buttonClass } from "@/lib/button-class";
 import { OrderTotals } from "@/components/shared/order-totals";
 
@@ -27,6 +27,7 @@ export function OrderDetail({ id, placed = false }: { id: string; placed?: boole
   const reduce = useReducedMotion();
 
   const isPickup = order?.delivery.method === "pickup";
+  const branch = findBranch(order?.delivery.branch);
   const firstName = order?.customer.name.split(" ")[0] ?? "";
 
   if (!hydrated) {
@@ -124,7 +125,9 @@ export function OrderDetail({ id, placed = false }: { id: string; placed?: boole
           <p className="text-xs text-ink-faint">{isPickup ? "Pickup" : "Delivery"}</p>
           <p className="mt-1.5 text-sm font-medium text-ink">
             {isPickup
-              ? `In store, ${site.location}`
+              ? branch
+                ? `${branch.name} · ${branch.address}`
+                : `In store, ${site.location}`
               : [order.delivery.address, order.delivery.area, order.delivery.city, order.delivery.region].filter(Boolean).join(", ")}
           </p>
           {order.delivery.eta && <p className="mt-0.5 text-sm text-ink-soft">{isPickup ? order.delivery.eta : `Arrives ${order.delivery.eta.toLowerCase()}`}</p>}

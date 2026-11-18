@@ -5,7 +5,7 @@ export function ChromeHeader({ trailing }: { trailing?: React.ReactNode }) {
   return (
     <header className="translucent sticky top-0 z-30 border-b border-line/60 bg-white/85 backdrop-blur-xl backdrop-saturate-150">
       <div className="container-shell flex h-[60px] items-center justify-between lg:h-[68px]">
-        <Logo priority className="h-[44px] lg:h-[50px]" />
+        <Logo priority />
         {trailing}
       </div>
     </header>

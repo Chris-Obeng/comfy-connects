@@ -6,29 +6,29 @@ import { ChevronRight, Menu, Search, ShoppingBag } from "lucide-react";
 import { Drawer } from "@heroui/react";
 import { SearchDialog, useSearchShortcut } from "@/components/shared/search-dialog";
 import { Logo } from "@/components/shared/logo";
-import { FacebookIcon, InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/components/shared/social-icons";
-import { categories, categoryHref } from "@/data/categories";
+import { TikTokIcon, WhatsAppIcon } from "@/components/shared/social-icons";
+import { categoryHref, navSections, type ShopCategoryId } from "@/data/categories";
 import { useBagUI, useCart, cartCount } from "@/store/cart";
 import { site, whatsappHref } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import type { SearchItem } from "@/types";
 
-const navLinks = categories.map(c => ({ id: c.id, name: c.name, href: categoryHref(c.id) }));
+const navLinks = navSections.map(c => ({ id: c.id, name: c.name, href: categoryHref(c.id) }));
 
 function DesktopNav() {
   const pathname = usePathname();
   const params = useSearchParams();
   const active = pathname === "/shop" ? params.get("category") : null;
   return (
-    <nav aria-label="Main" className="hidden items-center justify-center gap-7 lg:flex">
+    <nav aria-label="Main" className="hidden items-center justify-center gap-6 lg:flex xl:gap-8">
       {navLinks.map(link => (
         <Link
           key={link.id}
           href={link.href}
           aria-current={active === link.id ? "page" : undefined}
           className={cn(
-            "relative py-2 text-[15px] font-semibold transition-colors",
-            active === link.id ? "text-brand" : "text-ink hover:text-brand"
+            "relative py-2 text-[14px] font-medium transition-colors hover:text-brand xl:text-[15px]",
+            active === link.id ? "text-ink" : "text-ink/70"
           )}
         >
           {link.name}
@@ -89,9 +89,9 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
     <>
       <div className="bg-ink text-white">
         <p className="container-shell flex h-9 items-center justify-center gap-2 text-center text-[13px] font-semibold">
-          Delivery nationwide
+          Koforidua &amp; Kasoa
           <span aria-hidden className="text-white/40">·</span>
-          Same or next day in Accra
+          Delivery nationwide
         </p>
       </div>
       <header className="translucent sticky top-0 z-40 border-b border-line/60 bg-white/85 backdrop-blur-xl backdrop-saturate-150">
@@ -100,9 +100,9 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
             <button type="button" className={cn(iconButton, "lg:hidden")} aria-label="Open menu" onClick={() => setMenu(true)}>
               <Menu className="size-[22px] stroke-[1.6]" />
             </button>
-            <Logo priority className="hidden h-[50px] lg:inline-flex" />
+            <Logo priority className="hidden lg:inline-flex" />
           </div>
-          <Logo priority className="h-[44px] lg:hidden" />
+          <Logo priority className="lg:hidden" />
           <Suspense fallback={<div className="hidden lg:block" />}>
             <DesktopNav />
           </Suspense>
@@ -122,11 +122,11 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
               <Drawer.Body className="m-0 flex min-h-0 flex-1 flex-col overflow-y-auto p-0 text-ink">
                 <Drawer.Heading className="sr-only">Menu</Drawer.Heading>
                 <div className="flex h-[60px] items-center justify-between px-4">
-                  <Logo className="h-[44px]" />
+                  <Logo />
                   <Drawer.CloseTrigger className="static" />
                 </div>
                 <nav aria-label="Mobile" className="mt-2 flex flex-col px-3">
-                  {categories.map(c => (
+                  {([{ id: "all", name: "Shop everything" }, ...navSections] as { id: ShopCategoryId; name: string }[]).map(c => (
                     <Link
                       key={c.id}
                       href={categoryHref(c.id)}
@@ -139,7 +139,6 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
                   ))}
                   <div className="mx-2 mt-4 pt-1">
                     {[
-                      { href: "/shop", label: "Shop everything" },
                       { href: "/orders", label: "Your orders" },
                     ].map(l => (
                       <Link key={l.href} href={l.href} onClick={() => setMenu(false)} className="flex min-h-12 items-center text-[17px] font-medium text-ink">
@@ -148,16 +147,15 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
                     ))}
                   </div>
                 </nav>
-                <div className="safe-bottom mt-auto grid grid-cols-3 gap-2 px-5 pt-8">
-                  <a href={whatsappHref()} target="_blank" rel="noreferrer" className="btn btn-soft col-span-3">
+                <div className="safe-bottom mt-auto grid grid-cols-2 gap-2 px-5 pt-8">
+                  <a href={whatsappHref()} target="_blank" rel="noreferrer" className="btn btn-soft col-span-2">
                     <WhatsAppIcon className="size-[18px] text-[#25d366]" /> Chat on WhatsApp
                   </a>
                   {[
                     { name: "TikTok", href: site.tiktok, icon: <TikTokIcon className="size-[17px]" /> },
-                    { name: "Instagram", href: site.instagram, icon: <InstagramIcon className="size-[18px]" /> },
-                    { name: "Facebook", href: site.facebook, icon: <FacebookIcon className="size-[18px]" /> },
+                    { name: "Call", href: site.phoneHref, icon: <span className="text-[13px] font-semibold">Call</span> },
                   ].map(s => (
-                    <a key={s.name} href={s.href} target="_blank" rel="noreferrer" aria-label={`Fashion Tap Boutik on ${s.name}`} className="press flex h-12 items-center justify-center rounded-full bg-mist text-ink hover:bg-[#e6e6e6]">
+                    <a key={s.name} href={s.href} target="_blank" rel="noreferrer" aria-label={`${site.name} on ${s.name}`} className="press flex h-12 items-center justify-center rounded-full bg-mist text-ink hover:bg-[#e6e6e6]">
                       {s.icon}
                     </a>
                   ))}

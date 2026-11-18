@@ -1,20 +1,25 @@
-const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233249446921").replace(/\D/g, "");
+const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233591391901").replace(/\D/g, "");
 
+/**
+ * Store identity. Everything here was read off the store's own TikTok profile
+ * (@comfyconnects) and the captions on its videos.
+ */
 export const site = {
-  name: "Fashion Tap Boutik",
-  // Confirmed by the store owner.
-  location: "Agbogba, Accra",
-  city: "Agbogba, Accra, Ghana",
-  // Verified from the store's TikTok profile (bio links WhatsApp 0249446921).
-  tiktok: "https://www.tiktok.com/@fashiontapboutik",
-  tiktokHandle: "@fashiontapboutik",
-  // Confirmed by the store owner.
-  instagram: "https://www.instagram.com/fashion_tap_boutik/",
-  instagramHandle: "@fashion_tap_boutik",
-  facebook: "https://www.facebook.com/p/Fashion-Tap-Boutique-100065018320292/",
+  name: "Comfy Connects",
+  tagline: "Your gadget plug.",
+  // Both shops are named in every product caption on the store's TikTok.
+  location: "Koforidua · Kasoa",
+  city: "Koforidua & Kasoa, Ghana",
+  stores: [
+    { id: "koforidua", name: "Koforidua", address: "Antarctic Plaza, Shop 11", area: "Eastern Region" },
+    { id: "kasoa", name: "Kasoa", address: "Official Town, near JD", area: "Central Region" },
+  ],
+  tiktok: "https://www.tiktok.com/@comfyconnects",
+  tiktokHandle: "@comfyconnects",
+  tiktokFollowers: "17.9K",
   whatsapp: whatsappNumber,
-  phoneDisplay: "024 944 6921",
-  phoneHref: "tel:+233249446921",
+  phoneDisplay: "059 139 1901",
+  phoneHref: "tel:+233591391901",
 };
 
 /** WhatsApp deep link with an optional prefilled message. */
@@ -24,37 +29,64 @@ export function whatsappHref(message?: string) {
 }
 
 /* ------------------------------------------------------------------------------------------------
- * Delivery, nationwide. All fees are placeholder pesewas: confirm real rider and courier rates
- * before launch. Greater Accra is priced by area (dispatch rider); every other region ships by
- * courier at a flat regional rate.
+ * Delivery across Ghana. The two shops sit in the Eastern and Central regions, so those regions
+ * are priced by town with a dispatch rider; every other region ships by courier at a flat rate.
+ * All fees are placeholder pesewas — confirm the real rider and courier rates before launch.
  * ---------------------------------------------------------------------------------------------- */
-export const ACCRA = "Greater Accra";
+export const LOCAL_REGIONS = ["Eastern", "Central"] as const;
+export const isLocalRegion = (region?: string) =>
+  !!region && (LOCAL_REGIONS as readonly string[]).includes(region);
 
-export const accraAreas = [
-  { name: "Osu", fee: 2500 }, { name: "Labone", fee: 2500 }, { name: "Cantonments", fee: 3000 },
-  { name: "Airport Residential", fee: 3000 }, { name: "East Legon", fee: 3000 }, { name: "Dzorwulu", fee: 3500 },
-  { name: "Achimota", fee: 4000 }, { name: "Spintex", fee: 4000 }, { name: "Madina", fee: 4000 },
-  { name: "Adenta", fee: 4500 }, { name: "Kasoa", fee: 5000 }, { name: "Tema", fee: 5000 },
-  { name: "Other area in Greater Accra", fee: 5000 },
-] as const;
+export const localAreas: Record<string, { name: string; fee: number }[]> = {
+  Eastern: [
+    { name: "Koforidua", fee: 2000 },
+    { name: "Suhum", fee: 3500 },
+    { name: "Nsawam", fee: 3500 },
+    { name: "Other town in Eastern", fee: 4500 },
+  ],
+  Central: [
+    { name: "Kasoa", fee: 2000 },
+    { name: "Winneba", fee: 3500 },
+    { name: "Cape Coast", fee: 4000 },
+    { name: "Other town in Central", fee: 4500 },
+  ],
+};
 
 export const regions = [
-  { name: ACCRA, fee: 0 },
-  { name: "Ashanti", fee: 6000 }, { name: "Central", fee: 6000 }, { name: "Eastern", fee: 6000 },
-  { name: "Western", fee: 7000 }, { name: "Volta", fee: 7000 }, { name: "Western North", fee: 8000 },
-  { name: "Bono", fee: 8000 }, { name: "Bono East", fee: 8000 }, { name: "Ahafo", fee: 8000 },
-  { name: "Oti", fee: 9000 }, { name: "Northern", fee: 9000 }, { name: "Savannah", fee: 10000 },
-  { name: "North East", fee: 10000 }, { name: "Upper East", fee: 10000 }, { name: "Upper West", fee: 10000 },
+  { name: "Greater Accra", fee: 5000 },
+  { name: "Eastern", fee: 0 },
+  { name: "Central", fee: 0 },
+  { name: "Ashanti", fee: 6000 },
+  { name: "Volta", fee: 6500 },
+  { name: "Western", fee: 7000 },
+  { name: "Bono", fee: 8000 },
+  { name: "Bono East", fee: 8000 },
+  { name: "Ahafo", fee: 8000 },
+  { name: "Western North", fee: 8000 },
+  { name: "Oti", fee: 9000 },
+  { name: "Northern", fee: 9000 },
+  { name: "Savannah", fee: 10000 },
+  { name: "North East", fee: 10000 },
+  { name: "Upper East", fee: 10000 },
+  { name: "Upper West", fee: 10000 },
 ] as const;
 
-// The store is in Agbogba, Accra; the exact spot is shared on WhatsApp after the order.
-export const pickup = { label: `Pick up in store, ${site.location}`, eta: "Ready in 24 hours" };
+export const pickup = {
+  label: `Pick up free, ${site.stores.map(s => s.name).join(" or ")}`,
+  eta: "Ready in 2 hours",
+};
+
+/** The shop a pickup order is collected from. */
+export type StoreBranch = (typeof site.stores)[number];
+export const storeBranches = site.stores;
+export const findBranch = (id?: string) => site.stores.find(s => s.id === id);
 
 /** Fee + ETA for a delivery address. Returns null until enough is known to quote. */
 export function deliveryQuote(region?: string, area?: string): { fee: number; eta: string } | null {
   if (!region) return null;
-  if (region === ACCRA) {
-    const a = accraAreas.find(x => x.name === area);
+  if (isLocalRegion(region)) {
+    const list = localAreas[region] ?? [];
+    const a = list.find(x => x.name === area);
     return a ? { fee: a.fee, eta: "Same or next day" } : null;
   }
   const r = regions.find(x => x.name === region);
@@ -62,4 +94,4 @@ export function deliveryQuote(region?: string, area?: string): { fee: number; et
 }
 
 /** Cheapest fee anywhere, for "from GH₵ x" copy. */
-export const minDeliveryFee = Math.min(...accraAreas.map(a => a.fee));
+export const minDeliveryFee = Math.min(...Object.values(localAreas).flat().map(a => a.fee));

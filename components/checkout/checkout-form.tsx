@@ -8,7 +8,7 @@ import { Skeleton } from "@heroui/react";
 import { AlertCircle, ChevronDown, CreditCard, Loader2, Lock, MapPin, Smartphone, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { checkoutSchema, normalizeGhanaPhone, type CheckoutValues } from "@/lib/checkout-schema";
-import { ACCRA, accraAreas, deliveryQuote, pickup, regions } from "@/lib/config";
+import { deliveryQuote, findBranch, isLocalRegion, localAreas, pickup, regions, storeBranches } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { initiatePayment } from "@/lib/payments";
@@ -103,6 +103,23 @@ function ChoiceCard({ register, value, icon: Icon, title, text, aside }: { regis
   );
 }
 
+/** Pickup branch card: shop name, street address and a radio dot. */
+function BranchCard({ register, id, name, address, area }: { register: UseFormRegisterReturn; id: string; name: string; address: string; area: string }) {
+  return (
+    <label className="press group relative flex cursor-pointer items-start gap-3.5 rounded-[20px] border-[1.5px] border-line bg-white p-4 transition-colors has-[:checked]:border-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand has-[:focus-visible]:ring-offset-2">
+      <input type="radio" value={id} {...register} className="peer sr-only" />
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-semibold text-ink">{name}</span>
+        <span className="mt-0.5 block text-[14px] leading-5 text-ink-soft">{address}</span>
+        <span className="mt-0.5 block text-[13px] text-ink-faint">{area}</span>
+      </span>
+      <span className="mt-0.5 flex size-[22px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#c4c4c4] transition-colors group-has-[:checked]:border-ink group-has-[:checked]:bg-ink">
+        <span className="size-2 rounded-full bg-white opacity-0 transition-opacity group-has-[:checked]:opacity-100" />
+      </span>
+    </label>
+  );
+}
+
 function Section({ title, children, aside }: { title: string; children: React.ReactNode; aside?: React.ReactNode }) {
   const id = useId();
   return (
@@ -132,7 +149,7 @@ function SummaryItems({ items }: { items: CartItem[] }) {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-semibold text-ink">{item.name}</p>
-            <p className="mt-0.5 text-[13px] text-ink-soft">{[item.color, item.size !== "One size" ? item.size : null].filter(Boolean).join(" · ")}</p>
+            <p className="mt-0.5 text-[13px] text-ink-soft">{[item.color, item.size !== "Standard" ? item.size : null].filter(Boolean).join(" · ")}</p>
           </div>
           <p className="text-[15px] font-medium tabular-nums text-ink">{formatPrice(item.price * item.quantity)}</p>
         </li>
@@ -147,7 +164,7 @@ function Totals({ subtotal, fee, feeLabel, total, eta }: { subtotal: number; fee
       <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd className="tabular-nums text-ink">{formatPrice(subtotal)}</dd></div>
       <div className="flex justify-between gap-4">
         <dt className="text-ink-soft">{feeLabel}{eta && <span className="block text-[13px]">{eta}</span>}</dt>
-        <dd className="text-right tabular-nums text-ink">{fee === null ? <span className="text-ink-soft">Choose your area</span> : fee === 0 ? "Free" : formatPrice(fee)}</dd>
+        <dd className="text-right tabular-nums text-ink">{fee === null ? <span className="text-ink-soft">Choose your town</span> : fee === 0 ? "Free" : formatPrice(fee)}</dd>
       </div>
       <div className="flex items-baseline justify-between border-t border-line pt-3.5">
         <dt className="text-[17px] font-semibold text-ink">Total</dt>
@@ -168,16 +185,18 @@ export function CheckoutForm() {
 
   const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<CheckoutValues>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { fullName: "", phone: "", email: "", method: "delivery", region: "", area: "", city: "", address: "", gps: "", notes: "", payment: "momo" },
+    defaultValues: { fullName: "", phone: "", email: "", method: "delivery", branch: "", region: "", area: "", city: "", address: "", gps: "", notes: "", payment: "momo" },
     mode: "onTouched",
     shouldFocusError: true,
   });
-  const [method, region, area] = useWatch({ control, name: ["method", "region", "area"] });
+  const [method, branch, region, area] = useWatch({ control, name: ["method", "branch", "region", "area"] });
 
-  // Changing region invalidates the Accra area.
-  useEffect(() => { if (region !== ACCRA) setValue("area", ""); }, [region, setValue]);
+  // Changing region invalidates the town list of the previous one.
+  useEffect(() => { if (!isLocalRegion(region)) setValue("area", ""); }, [region, setValue]);
+  const towns = isLocalRegion(region) ? (localAreas[region!] ?? []) : [];
 
-  const quote = method === "pickup" ? { fee: 0, eta: pickup.eta } : deliveryQuote(region, area);
+  const branchName = findBranch(branch)?.name;
+  const quote = method === "pickup" ? { fee: 0, eta: branchName ? `${branchName} · ${pickup.eta}` : "Choose a shop" } : deliveryQuote(region, area);
   const fee = quote?.fee ?? null;
   const total = subtotal + (fee ?? 0);
 
@@ -185,12 +204,12 @@ export function CheckoutForm() {
     setProcessing(true);
     const delivery: Order["delivery"] =
       values.method === "pickup"
-        ? { method: "pickup", eta: pickup.eta }
+        ? { method: "pickup", branch: values.branch, eta: pickup.eta }
         : {
             method: "delivery",
             region: values.region,
-            area: values.region === ACCRA ? values.area : undefined,
-            city: values.region === ACCRA ? "Accra" : values.city?.trim(),
+            area: isLocalRegion(values.region) ? values.area : undefined,
+            city: isLocalRegion(values.region) ? values.area : values.city?.trim(),
             address: [values.address?.trim(), values.gps?.trim().toUpperCase()].filter(Boolean).join(" · "),
             notes: values.notes?.trim() || undefined,
             eta: quote?.eta,
@@ -254,7 +273,7 @@ export function CheckoutForm() {
     return (
       <div className="container-shell flex flex-1 flex-col py-10">
         <h1 className="sr-only">Checkout</h1>
-        <div className="mx-auto w-full max-w-[560px] rounded-[28px] bg-white">
+        <div className="mx-auto flex w-full max-w-[560px] flex-1 flex-col rounded-[28px] bg-white">
           <EmptyBag />
         </div>
       </div>
@@ -331,7 +350,7 @@ export function CheckoutForm() {
                 <legend className="sr-only">How would you like to get your order?</legend>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <ChoiceCard register={register("method")} value="delivery" icon={Truck} title="Deliver to me" text="Anywhere in Ghana" />
-                  <ChoiceCard register={register("method")} value="pickup" icon={Store} title="Pick up in store" text={`Free · ${pickup.eta.toLowerCase()}`} />
+                  <ChoiceCard register={register("method")} value="pickup" icon={Store} title="Pick up in store" text={`Koforidua or Kasoa · ${pickup.eta}`} />
                 </div>
               </fieldset>
 
@@ -345,14 +364,14 @@ export function CheckoutForm() {
                     placeholder="Choose your region"
                     options={regions.map(r => ({ value: r.name, label: r.name }))}
                   />
-                  {region === ACCRA ? (
+                  {isLocalRegion(region) ? (
                     <SelectField
                       id="area"
-                      label="Area"
+                      label="Town"
                       error={errors.area?.message}
                       register={register("area")}
-                      placeholder="Choose your area"
-                      options={accraAreas.map(a => ({ value: a.name, label: `${a.name} · ${formatPrice(a.fee)}` }))}
+                      placeholder="Choose your town"
+                      options={towns.map(a => ({ value: a.name, label: `${a.name} · ${formatPrice(a.fee)}` }))}
                     />
                   ) : (
                     <Field label="Town or city" error={errors.city?.message} id="city">
@@ -378,12 +397,26 @@ export function CheckoutForm() {
                   )}
                 </div>
               ) : (
-                <div className="mt-5 flex gap-3.5 rounded-[20px] bg-mist p-4">
-                  <MapPin className="mt-0.5 size-5 shrink-0 text-ink" aria-hidden />
-                  <div>
-                    <p className="text-[15px] font-semibold text-ink">{pickup.label}</p>
-                    <p className="mt-1 text-[14px] leading-6 text-ink-soft">{pickup.eta}. We’ll WhatsApp you the exact location and a pickup time.</p>
-                  </div>
+                <div className="mt-6">
+                  <fieldset aria-describedby={errors.branch ? "branch-error" : undefined}>
+                    <legend className="mb-2.5 text-[14px] font-medium text-ink">Which shop will you collect from?</legend>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {storeBranches.map(b => (
+                        <BranchCard key={b.id} register={register("branch")} id={b.id} name={b.name} address={b.address} area={b.area} />
+                      ))}
+                    </div>
+                    {errors.branch && (
+                      <p id="branch-error" className="mt-2 flex items-center gap-1.5 text-[13px] font-medium text-sale">
+                        <AlertCircle className="size-3.5 shrink-0" aria-hidden /> {errors.branch.message}
+                      </p>
+                    )}
+                  </fieldset>
+                  <p className="mt-4 flex items-start gap-2.5 rounded-2xl bg-brand-soft px-4 py-3 text-[14px] leading-6 text-ink">
+                    <MapPin className="mt-0.5 size-[18px] shrink-0 text-brand" aria-hidden />
+                    <span>
+                      {branchName ? `${branchName} · ` : ""}{pickup.eta}. We’ll WhatsApp you when it’s ready to collect.
+                    </span>
+                  </p>
                 </div>
               )}
             </Section>
