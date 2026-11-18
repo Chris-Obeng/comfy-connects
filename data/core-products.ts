@@ -505,7 +505,7 @@ const rest: Core[] = [
     price: 15000,
     tint: "#EFEFEC",
     category: "accessories",
-    variantLabel: "Size",
+    variantLabel: "Model",
     sizes: [
       { name: "iPhone 15", stock: 6 },
       { name: "iPhone 16", stock: 6 },

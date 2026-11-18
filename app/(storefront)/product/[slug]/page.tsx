@@ -39,24 +39,26 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
 
   return (
     <div>
-      <nav aria-label="Breadcrumb" className="container-shell hidden pt-6 md:block">
-        <ol className="flex items-center gap-1.5 text-[13px] text-ink-soft">
-          <li><Link href="/shop" className="hover:text-ink">Shop</Link></li>
+      <nav aria-label="Breadcrumb" className="container-shell hidden pt-5 md:block">
+        <ol className="flex items-center gap-1 text-[13px] text-ink-soft">
+          <li><Link href="/shop" className="hover:text-ink hover:underline">Shop</Link></li>
           <li aria-hidden><ChevronRight className="size-3.5" /></li>
-          <li><Link href={categoryHref(product.category)} className="hover:text-ink">{categoryName(product.category)}</Link></li>
+          <li><Link href={categoryHref(product.category)} className="hover:text-ink hover:underline">{categoryName(product.category)}</Link></li>
         </ol>
       </nav>
-      <div className="container-shell grid gap-6 pb-28 md:grid-cols-[1.15fr_.85fr] md:gap-12 md:pb-0 md:pt-5 lg:gap-16">
-        <ProductTitle product={product} className="pt-5 md:hidden" />
+      <div className="container-shell grid gap-5 pb-16 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-12 md:pt-5 lg:gap-20">
+        <ProductTitle product={product} className="pt-6 md:hidden" />
         <ProductGallery images={product.images} name={product.name} tint={product.tint} cutout={product.cutout} />
         <ProductInfo product={product} />
       </div>
-      <section className="mt-16 bg-mist py-14 sm:mt-24 sm:py-20">
-        <div className="container-shell">
-          <SectionHeading title="You may also like" href={categoryHref(product.category)} action="See more" />
-          <ProductRail products={related} />
-        </div>
-      </section>
+      {related.length > 0 && (
+        <section className="bg-mist py-14 sm:py-20">
+          <div className="container-shell">
+            <SectionHeading title="You might also like." href={categoryHref(product.category)} action="See more" />
+          </div>
+          <ProductRail products={related} label="You might also like" />
+        </section>
+      )}
     </div>
   );
 }

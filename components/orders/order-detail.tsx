@@ -86,7 +86,7 @@ export function OrderDetail({ id, placed = false }: { id: string; placed?: boole
         </p>
       </div>
 
-      <section aria-label="Order items" className="mt-10 rounded-2xl border border-line bg-white p-5 sm:p-6">
+      <section aria-label="Order items" className="mt-10 rounded-[18px] bg-mist p-5 sm:p-6">
         <div className="divide-y divide-line">
           {order.items.map(item => (
             <div key={item.key} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
@@ -120,7 +120,7 @@ export function OrderDetail({ id, placed = false }: { id: string; placed?: boole
         </div>
       </section>
 
-      <div className="mt-4 grid gap-x-8 gap-y-5 rounded-2xl border border-line bg-white p-5 sm:grid-cols-2 sm:p-6">
+      <div className="mt-4 grid gap-x-8 gap-y-5 rounded-[18px] bg-mist p-5 sm:grid-cols-2 sm:p-6">
         <div>
           <p className="text-xs text-ink-faint">{isPickup ? "Pickup" : "Delivery"}</p>
           <p className="mt-1.5 text-sm font-medium text-ink">

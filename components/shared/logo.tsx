@@ -25,7 +25,7 @@ export function Logo({
     <Link
       href="/"
       aria-label={`${site.name} home`}
-      className={cn("press inline-flex shrink-0 items-center gap-2.5", className)}
+      className={cn("press inline-flex min-h-11 shrink-0 items-center gap-2", className)}
     >
       <Image
         src="/logo.jpeg"
@@ -34,12 +34,12 @@ export function Logo({
         height={120}
         preload={priority}
         sizes="40px"
-        className="size-9 shrink-0 rounded-[26%] sm:size-10"
+        className="size-8 shrink-0 rounded-[26%] ring-1 ring-black/5"
       />
       {!markOnly && (
         <span
           className={cn(
-            "whitespace-nowrap text-[16px] font-semibold tracking-[-0.02em]",
+            "whitespace-nowrap text-[15px] font-semibold tracking-[-0.02em]",
             light ? "text-white" : "text-ink"
           )}
         >

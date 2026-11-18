@@ -14,6 +14,7 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-line: var(--line);
+  --color-hairline: var(--hairline);
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-sale: var(--sale);
@@ -31,18 +32,21 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* Palette */
+  /* Palette: Apple's store neutrals, with the logo's red and mint as the only colour of our own. */
   --canvas: #ffffff;
-  --mist: #f1f1f1;
-  --soft: #f6f6f6;
-  --ink: #111111;
-  --ink-soft: #595959;
-  --ink-faint: #8a8a8a;
-  --line: #e2e2e2;
-  /* The logo's own deep red, used once per screen. */
+  --mist: #f5f5f7;
+  --soft: #fafafc;
+  --ink: #1d1d1f;
+  /* 4.7:1 on --mist, 5.1:1 on white. */
+  --ink-soft: #6e6e73;
+  /* Icons and decoration only, never text. */
+  --ink-faint: #a1a1a6;
+  --line: #d2d2d7;
+  --hairline: #e8e8ed;
+  /* The logo's own deep red: "New", sale prices, the cart badge, focus rings. */
   --brand: #982427;
-  --brand-soft: #eefceb;
-  --sale: #c4161c;
+  --brand-soft: #eefbe8;
+  --sale: #982427;
 
   /* HeroUI semantic tokens */
   --surface: var(--canvas);
@@ -85,7 +89,7 @@
 
 @layer base {
   * {
-    border-color: var(--line);
+    border-color: var(--hairline);
   }
 
   html {
@@ -97,6 +101,9 @@
 
   body {
     @apply bg-canvas text-ink font-sans antialiased;
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.012em;
   }
 
   button,
@@ -131,7 +138,7 @@
   }
 
   ::selection {
-    background: #eefceb;
+    background: var(--brand-soft);
     color: var(--ink);
   }
 
@@ -164,20 +171,25 @@
     @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10;
   }
 
-  /* Display type, Beats-style: big and regular weight, near-neutral tracking.
-   * Weight comes from size, not boldness. Section titles use .headline (semibold, smaller). */
+  /* Display type, Apple-style: semibold, tight leading, tracking that tightens as it grows.
+   * Section titles use .headline: same voice, one step down. */
   .display {
-    @apply font-normal leading-[1.06] tracking-[-0.015em];
+    @apply font-semibold leading-[1.05] tracking-[-0.028em];
   }
 
   .headline {
-    @apply font-semibold leading-[1.15] tracking-[-0.01em];
+    @apply font-semibold leading-[1.1] tracking-[-0.022em];
+  }
+
+  /* Apple's two-tone section title: the name in ink, the line after it in grey. */
+  .headline .tone {
+    @apply text-ink-soft;
   }
 
   /* Studio shots sit on the product's own colour field: multiply drops the
    * white sweep so the piece floats on the tint, Beats-style. */
   .tint-media {
-    background-color: var(--tint, var(--soft));
+    background-color: var(--tint, var(--mist));
   }
 
   .tint-media img[data-studio] {
@@ -198,11 +210,10 @@
     transform: scale(0.97);
   }
 
-  /* Buttons, Beats-style: full pills, medium weight, quiet tracking. One vocabulary site-wide.
-   * btn-primary: solid ink. btn-outline: ink hairline that fills on hover.
-   * btn-light / btn-ghost-light: for use on photography and dark panels. */
+  /* Buttons: Apple/Beats pills. One vocabulary site-wide, never below 44px on touch.
+   * btn-primary: solid ink. btn-outline: ink hairline that fills on hover. */
   .btn {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-normal whitespace-nowrap select-none sm:h-10 sm:px-5;
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-full px-6 text-[16px] font-medium tracking-[-0.01em] whitespace-nowrap select-none;
     transition:
       transform 160ms var(--ease-out),
       background-color 180ms var(--ease-out),
@@ -222,16 +233,16 @@
   }
 
   .btn-sm {
-    @apply h-9 px-4 text-[14px] sm:h-9 sm:px-4;
+    @apply h-9 px-4 text-[14px];
   }
 
   .btn-lg {
-    @apply h-12 px-7 text-[16px] sm:h-12 sm:px-7;
+    @apply h-[52px] px-8 text-[17px];
   }
 
-  /* Commerce actions read in caps, like Beats' ADD TO BAG: regular weight, light tracking. */
+  /* Kept for older call sites; commerce actions now read in sentence case, like Apple's. */
   .btn-caps {
-    @apply uppercase tracking-[0.03em];
+    letter-spacing: -0.01em;
   }
 
   .btn-primary {
@@ -239,7 +250,7 @@
   }
 
   .btn-outline {
-    @apply border-[1.5px] border-ink bg-white text-ink;
+    @apply border border-ink bg-transparent text-ink;
   }
 
   /* Beats outline-on-photo is a 2px white ring with no fill. */
@@ -258,7 +269,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     .btn-primary:hover:not(:disabled) {
-      background: #333;
+      background: #3a3a3c;
     }
 
     .btn-outline:hover:not(:disabled) {
@@ -266,7 +277,7 @@
     }
 
     .btn-soft:hover:not(:disabled) {
-      background: #e4e4e4;
+      background: #e8e8ed;
     }
 
     .btn-light:hover:not(:disabled) {
@@ -301,6 +312,51 @@
     }
   }
 
+  /* Product card: white tile on the grey field. On pointer devices it lifts a little and the
+   * second studio shot cross-fades in; on touch it only acknowledges the press. */
+  .product-card {
+    transition:
+      transform 160ms var(--ease-out),
+      box-shadow 300ms var(--ease-out);
+  }
+
+  .product-card:active {
+    transform: scale(0.98);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .product-card:hover {
+      box-shadow: 0 10px 30px -12px rgb(29 29 31 / 0.18), 0 2px 6px rgb(29 29 31 / 0.04);
+    }
+  }
+
+  /* Phone buy bar: slides up from the bottom edge once the page's own button scrolls away. */
+  .buy-bar {
+    transform: translateY(110%);
+    transition: transform 280ms var(--ease-drawer);
+  }
+
+  .buy-bar[data-show="true"] {
+    transform: translateY(0);
+  }
+
+  /* Disclosure rows (Overview, Specs): native <details>, chevron turns on open. */
+  .disclosure > summary {
+    list-style: none;
+  }
+
+  .disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .disclosure > summary svg {
+    transition: transform 200ms var(--ease-out);
+  }
+
+  .disclosure[open] > summary svg {
+    transform: rotate(180deg);
+  }
+
   /* Search palette entry: materialises with @starting-style, no JS timing. */
   .search-backdrop {
     background: rgb(17 17 17 / 0.4);
@@ -333,6 +389,25 @@
 
   .safe-bottom {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Full-bleed scroller whose first card lines up with the page container. */
+  .rail {
+    --gutter: 20px;
+    padding-inline: max(var(--gutter), calc((100% - 1280px) / 2 + var(--gutter)));
+    scroll-padding-inline: max(var(--gutter), calc((100% - 1280px) / 2 + var(--gutter)));
+  }
+
+  @media (min-width: 640px) {
+    .rail {
+      --gutter: 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .rail {
+      --gutter: 40px;
+    }
   }
 
   .hide-scrollbar {
@@ -526,8 +601,22 @@
 
   .card-media img,
   .search-backdrop,
-  .search-panel {
+  .search-panel,
+  .product-card,
+  .product-card:active {
     transition: none;
+    transform: none;
+  }
+
+  /* The buy bar fades instead of sliding. */
+  .buy-bar {
+    transform: none;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .buy-bar[data-show="true"] {
+    opacity: 1;
   }
 
   /* Keyframe animations stop dead; brief opacity/color transitions may remain. */

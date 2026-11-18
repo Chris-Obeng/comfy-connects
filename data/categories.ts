@@ -16,48 +16,39 @@ const panel = (slug: string, overrides: Partial<{ label: string; tint: string }>
 };
 
 /**
- * Editorial slots for the homepage. Every image is the shop's own stock on the
- * brand's white sweep, so it floats on its colour field.
+ * Homepage tiles, Apple-style: one product per tile, its name, one line, Buy and Learn more.
+ * Every image is the manufacturer's studio shot on a white sweep, so it floats on the tint.
+ * Lines are facts from the product record, never claims we can't back.
  */
 export const editorial = {
   hero: {
-    eyebrow: "Koforidua & Kasoa",
-    headline: "Your gadget plug.",
-    sub: "Bags, power and smart gear. Free pickup in Koforidua or Kasoa.",
-    panels: [
-      panel("wiwu-warriors-backpack-x-pro", { tint: "#E8EFE4" }),
-      panel("phone-planet-hybrid-max", { tint: "#F4EBE3", label: "Hybrid Max Power Bank" }),
-      panel("s2-max-ai-smart-glasses", { tint: "#ECEAF1", label: "S2 Max AI Smart Glasses" }),
-    ],
+    slug: "wiwu-warriors-backpack-x-pro",
+    title: "Warriors X Pro",
+    line: "Waterproof, with a shockproof laptop bay.",
+    tint: "#eefbe8",
   },
-  promos: [
+  tiles: [
     {
-      ...panel("wiwu-t33-anc-earbuds", { tint: "#E6ECF2" }),
-      eyebrow: "New in",
-      title: "Quiet, on purpose.",
-      text: "T33 ANC Pro earbuds cut 42 dB of trotro and shop noise. GH₵420.",
-      href: "/product/wiwu-t33-anc-earbuds",
-      action: "See the earbuds",
-      panel: "#E6ECF2",
+      slug: "wiwu-t33-anc-earbuds",
+      title: "T33 ANC Pro",
+      line: "Noise cancelling, with four mics for calls.",
+      tint: "#e9eef4",
     },
     {
-      ...panel("wiwu-warriors-backpack-x-pro", { tint: "#E8EFE4" }),
-      eyebrow: "Best seller",
-      title: "Warriors X Pro.",
-      text: "A 15.6-inch laptop backpack that survives the trotro. GH₵850.",
-      href: "/product/wiwu-warriors-backpack-x-pro",
-      action: "See the backpack",
-      panel: "#E8EFE4",
+      slug: "s2-max-ai-smart-glasses",
+      title: "S2 Max",
+      line: "Photos, music and calls, hands free.",
+      tint: "#eeecf3",
     },
   ],
-  feature: {
-    ...panel("phone-planet-hybrid-max", { tint: "#22201f" }),
-    title: "Power that refills itself.",
-    text: "The Hybrid Max is a 10,000mAh power bank with its own wall plug. Charge it in any socket, and the only cable you carry is for your phone.",
-    href: "/product/phone-planet-hybrid-max",
-    action: "Shop the Hybrid Max",
-    panel: "#22201f",
+  wide: {
+    slug: "phone-planet-hybrid-max",
+    title: "Hybrid Max",
+    line: "A power bank with its own wall plug.",
+    tint: "#f5ede5",
   },
+  /** Open Graph image for the whole site. */
+  share: panel("wiwu-warriors-backpack-x-pro"),
 };
 
 /**
