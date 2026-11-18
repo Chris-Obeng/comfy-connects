@@ -37,9 +37,6 @@ export function CartPanel() {
         <span className="text-[17px] font-semibold text-ink">Subtotal</span>
         <span className="text-[21px] font-semibold tracking-[-0.02em] tabular-nums text-ink">{formatPrice(subtotal)}</span>
       </div>
-      <p className="mt-1 text-[13px] leading-5 text-ink-soft">
-        Pickup is free. Delivery is added at checkout.
-      </p>
       <Link href="/checkout" onClick={() => setOpen(false)} className={buttonClass({ size: "lg", className: "mt-4 w-full" })}>
         <Lock className="size-4" aria-hidden /> Check out
       </Link>
