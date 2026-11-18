@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, MessageCircle, Store, Truck } from "lucide-react";
+import { Check, ChevronDown, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { useBagUI, useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
-import { pickup, site, whatsappHref } from "@/lib/config";
+import { site } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { QuantityStepper } from "@/components/shared/quantity-stepper";
 import type { Product } from "@/types";
@@ -97,8 +97,6 @@ export function ProductInfo({ product }: { product: Product }) {
     <span className="flex items-center gap-2"><Check className="size-5" aria-hidden /> Added</span>
   ) : !selectedSize ? `Choose ${labelLower === "size" ? "a size" : `a ${labelLower}`}` : "Add to cart";
 
-  const ask = whatsappHref(`Hi Comfy Connects, I'm asking about the ${product.name}.`);
-
   return (
     <>
       <div className="min-w-0 md:sticky md:top-20 md:self-start md:pt-2">
@@ -114,7 +112,6 @@ export function ProductInfo({ product }: { product: Product }) {
             <>
               <Check className="size-4 text-ink" strokeWidth={2.2} aria-hidden />
               <span className="text-ink">In stock</span>
-              <span className="text-ink-soft">· pickup {pickup.eta.toLowerCase()}</span>
             </>
           )}
         </p>
@@ -193,7 +190,7 @@ export function ProductInfo({ product }: { product: Product }) {
 
         <ul role="list" className="mt-8 space-y-5 border-t border-hairline pt-6">
           {[
-            { icon: Store, title: "Free pickup", text: `${pickup.eta} at ${site.stores.map(x => x.name).join(" or ")}.` },
+            { icon: Store, title: "Free pickup", text: `Collect from ${site.stores.map(x => x.name).join(" or ")}.` },
             { icon: Truck, title: "Delivery nationwide", text: "Same or next day in Koforidua and Kasoa. 2–4 days elsewhere." },
           ].map(({ icon: Icon, title, text }) => (
             <li key={title} className="flex gap-3.5">
@@ -204,15 +201,6 @@ export function ProductInfo({ product }: { product: Product }) {
               </p>
             </li>
           ))}
-          <li className="flex gap-3.5">
-            <MessageCircle className="mt-0.5 size-[22px] shrink-0 stroke-[1.5] text-ink" aria-hidden />
-            <p className="text-[14px] leading-5">
-              <span className="block font-semibold text-ink">Questions?</span>
-              <a href={ask} target="_blank" rel="noreferrer" className="text-ink-soft underline decoration-line underline-offset-4 hover:text-ink hover:decoration-ink">
-                WhatsApp us about this one
-              </a>
-            </p>
-          </li>
         </ul>
 
         <div className="mt-8 border-t border-hairline">

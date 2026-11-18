@@ -8,7 +8,7 @@ import { Skeleton } from "@heroui/react";
 import { AlertCircle, ChevronDown, CreditCard, Loader2, Lock, MapPin, Smartphone, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { checkoutSchema, normalizeGhanaPhone, type CheckoutValues } from "@/lib/checkout-schema";
-import { deliveryQuote, findBranch, isLocalRegion, localAreas, pickup, regions, storeBranches } from "@/lib/config";
+import { deliveryQuote, findBranch, isLocalRegion, localAreas, regions, storeBranches } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { initiatePayment } from "@/lib/payments";
@@ -196,7 +196,7 @@ export function CheckoutForm() {
   const towns = isLocalRegion(region) ? (localAreas[region!] ?? []) : [];
 
   const branchName = findBranch(branch)?.name;
-  const quote = method === "pickup" ? { fee: 0, eta: branchName ? `${branchName} · ${pickup.eta}` : "Choose a shop" } : deliveryQuote(region, area);
+  const quote = method === "pickup" ? { fee: 0, eta: branchName ?? "Choose a shop" } : deliveryQuote(region, area);
   const fee = quote?.fee ?? null;
   const total = subtotal + (fee ?? 0);
 
@@ -204,7 +204,7 @@ export function CheckoutForm() {
     setProcessing(true);
     const delivery: Order["delivery"] =
       values.method === "pickup"
-        ? { method: "pickup", branch: values.branch, eta: pickup.eta }
+        ? { method: "pickup", branch: values.branch }
         : {
             method: "delivery",
             region: values.region,
@@ -350,7 +350,7 @@ export function CheckoutForm() {
                 <legend className="sr-only">How would you like to get your order?</legend>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <ChoiceCard register={register("method")} value="delivery" icon={Truck} title="Deliver to me" text="Anywhere in Ghana" />
-                  <ChoiceCard register={register("method")} value="pickup" icon={Store} title="Pick up in store" text={`Koforidua or Kasoa · ${pickup.eta}`} />
+                  <ChoiceCard register={register("method")} value="pickup" icon={Store} title="Pick up in store" text="Koforidua or Kasoa" />
                 </div>
               </fieldset>
 
@@ -414,7 +414,7 @@ export function CheckoutForm() {
                   <p className="mt-4 flex items-start gap-2.5 rounded-2xl bg-brand-soft px-4 py-3 text-[14px] leading-6 text-ink">
                     <MapPin className="mt-0.5 size-[18px] shrink-0 text-brand" aria-hidden />
                     <span>
-                      {branchName ? `${branchName} · ` : ""}{pickup.eta}. We’ll WhatsApp you when it’s ready to collect.
+                      {branchName ? `${branchName}. ` : ""}We’ll WhatsApp you when it’s ready to collect.
                     </span>
                   </p>
                 </div>
