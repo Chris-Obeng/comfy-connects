@@ -10,6 +10,12 @@ import { cn } from "@/lib/utils";
 
 type Sort = "featured" | "price-asc" | "price-desc";
 
+const sortOptions: { id: Sort; label: string }[] = [
+  { id: "featured", label: "Featured" },
+  { id: "price-asc", label: "Price: low to high" },
+  { id: "price-desc", label: "Price: high to low" },
+];
+
 export function ShopClient({ products, category, query }: { products: Product[]; category: string; query?: string }) {
   const [sort, setSort] = useState<Sort>("featured");
   const chips = useRef<HTMLElement>(null);
@@ -80,24 +86,19 @@ export function ShopClient({ products, category, query }: { products: Product[];
           selectedKey={sort}
           onSelectionChange={key => setSort((key as Sort) ?? "featured")}
         >
-          <Select.Trigger className="h-11 w-fit gap-2 rounded-full border-0 bg-transparent pl-3 pr-9 text-[14px] font-medium text-ink shadow-none">
-            <Select.Value />
-            <Select.Indicator />
+          <Select.Trigger className="h-11 w-fit gap-1.5 rounded-full border-0 bg-white pl-4 pr-10 text-[14px] text-ink shadow-none transition-colors hover:bg-[#ededf0] data-[pressed=true]:scale-[0.98]">
+            <span className="text-ink-soft">Sort by</span>
+            <Select.Value className="text-[14px] font-medium text-ink" />
+            <Select.Indicator className="right-3.5 text-ink" />
           </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="featured" textValue="Featured">
-                Featured
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
-              <ListBox.Item id="price-asc" textValue="Price: low to high">
-                Price: low to high
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
-              <ListBox.Item id="price-desc" textValue="Price: high to low">
-                Price: high to low
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
+          <Select.Popover placement="bottom end" offset={8} className="min-w-[250px]! rounded-[18px] p-1.5">
+            <ListBox aria-label="Sort products" className="gap-0.5 p-0">
+              {sortOptions.map(option => (
+                <ListBox.Item key={option.id} id={option.id} textValue={option.label} className="min-h-11 rounded-[12px] px-3 text-[15px] text-ink outline-none focus-visible:outline-none data-[focus-visible=true]:ring-0! data-[focus-visible=true]:ring-offset-0! data-[focus-visible=true]:shadow-none! data-[focused=true]:bg-mist data-[hovered=true]:bg-mist">
+                  {option.label}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
             </ListBox>
           </Select.Popover>
         </Select>
