@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, MessageCircle, Smartphone, Store, Truck } from "lucide-react";
+import { MapPin, Smartphone, Store, Truck } from "lucide-react";
 import { categories, categoryHref, editorial } from "@/data/categories";
 import { getProducts } from "@/lib/products";
 import { ProductCard } from "@/components/shared/product-card";
@@ -8,7 +8,7 @@ import { ProductRail } from "@/components/shared/product-rail";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ProductTile } from "@/components/home/hero";
 import { buttonClass } from "@/lib/button-class";
-import { minDeliveryFee, site, whatsappHref } from "@/lib/config";
+import { minDeliveryFee, site } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/types";
 
@@ -92,21 +92,16 @@ export default async function HomePage() {
         <h2 id="shops-title" className="headline text-[28px] text-ink sm:text-[40px]">
           Two shops. <span className="text-ink-soft">And delivery across Ghana.</span>
         </h2>
-        <ul role="list" className="mt-8 grid gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-2 lg:grid-cols-4">
+        <ul role="list" className="mt-8 grid gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-3">
           {[
             { icon: Store, title: "Free pickup", text: "Ready in 2 hours at either shop." },
             { icon: Truck, title: "Delivery nationwide", text: `Same or next day in Koforidua and Kasoa, from ${formatPrice(minDeliveryFee)}.` },
             { icon: Smartphone, title: "Mobile Money or card", text: "MTN MoMo, Telecel Cash, AirtelTigo, Visa and Mastercard." },
-            { icon: MessageCircle, title: "Ask a real person", text: `WhatsApp or call ${site.phoneDisplay}.`, href: whatsappHref("Hi Comfy Connects, I have a question about a gadget.") },
-          ].map(({ icon: Icon, title, text, href }) => (
+          ].map(({ icon: Icon, title, text }) => (
             <li key={title} className="flex gap-4 sm:flex-col sm:gap-3">
               <Icon className="size-7 shrink-0 stroke-[1.5] text-brand" aria-hidden />
               <div>
-                <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-ink">
-                  {href ? (
-                    <a href={href} target="_blank" rel="noreferrer" className="hover:underline">{title}</a>
-                  ) : title}
-                </h3>
+                <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-ink">{title}</h3>
                 <p className="mt-1 max-w-[32ch] text-[15px] leading-[1.45] text-ink-soft">{text}</p>
               </div>
             </li>
