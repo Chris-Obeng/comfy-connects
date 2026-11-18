@@ -46,7 +46,7 @@ export function AddedToBag() {
   const item = added?.item;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+60px)] z-50 flex justify-center px-3 sm:justify-end sm:px-6 lg:top-[72px] lg:px-10">
+    <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+60px)] z-50 flex justify-center px-3 sm:justify-end sm:px-6 lg:top-[64px] lg:px-10">
       <div className="w-full max-w-[1280px] sm:flex sm:justify-end">
         <AnimatePresence>
           {item && (
@@ -66,7 +66,7 @@ export function AddedToBag() {
               animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12, scale: 0.98, transition: { duration: 0.18, ease: [0.23, 1, 0.32, 1] } }}
               transition={{ type: "spring", duration: 0.42, bounce: 0.12 }}
-              className="pointer-events-auto w-full touch-pan-x overflow-hidden rounded-[24px] bg-white/95 p-4 shadow-[0_18px_50px_-12px_rgb(17_17_17/0.28),0_2px_8px_rgb(17_17_17/0.06)] ring-1 ring-black/5 backdrop-blur-xl sm:w-[380px]"
+              className="pointer-events-auto w-full touch-pan-x overflow-hidden rounded-[22px] bg-white/95 p-4 shadow-[0_18px_50px_-12px_rgb(17_17_17/0.28),0_2px_8px_rgb(17_17_17/0.06)] ring-1 ring-black/5 backdrop-blur-xl sm:w-[380px]"
             >
               <div className="flex items-start gap-3.5">
                 <ProductThumb src={item.image} tint={item.tint} cutout={item.cutout} sizes="64px" className="size-16 rounded-2xl" />
@@ -104,7 +104,7 @@ export function AddedToBag() {
                   onClick={hide}
                   className="press flex h-11 items-center justify-center rounded-full bg-ink text-[14px] font-semibold text-white hover:bg-[#2b2b2b]"
                 >
-                  Checkout
+                  Check out
                 </Link>
               </div>
             </motion.div>

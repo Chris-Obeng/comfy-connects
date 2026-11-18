@@ -1,41 +1,34 @@
 import Link from "next/link";
-import { Phone } from "lucide-react";
 import { categories, categoryHref } from "@/data/categories";
 import { site, whatsappHref } from "@/lib/config";
 import { Logo } from "@/components/shared/logo";
 import { TikTokIcon, WhatsAppIcon } from "@/components/shared/social-icons";
 
-const shopLinks = [{ name: "Shop everything", href: "/shop" }, ...categories.map(c => ({ name: c.name, href: categoryHref(c.id) }))];
+const shopLinks = [{ name: "Shop all", href: "/shop" }, ...categories.map(c => ({ name: c.name, href: categoryHref(c.id) }))];
 
-const socials = [
-  { name: "TikTok", label: site.tiktokHandle, text: `TikTok ${site.tiktokHandle}`, href: site.tiktok, icon: <TikTokIcon className="size-[19px]" /> },
-  { name: "WhatsApp", label: "Chat with us", text: "WhatsApp: chat with us", href: whatsappHref(), icon: <WhatsAppIcon className="size-[21px]" /> },
-  { name: "Call", label: site.phoneDisplay, text: `Call ${site.phoneDisplay}`, href: site.phoneHref, icon: <Phone className="size-[19px]" /> },
-];
+const linkClass = "inline-flex min-h-9 items-center text-[13px] text-ink-soft transition-colors hover:text-ink hover:underline sm:min-h-8";
 
+/** Apple-style footer: quiet grey field, small type, three short columns. */
 export function Footer() {
   return (
-    <footer className="mt-auto bg-ink text-white">
-      <div className="container-shell pb-10 pt-14 lg:pt-20">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr]">
+    <footer className="mt-auto border-t border-line/70 bg-mist text-ink">
+      <div className="container-shell pb-8 pt-10 sm:pt-12">
+        <div className="grid gap-8 border-b border-line pb-8 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Logo light />
-            <p className="mt-4 max-w-[30ch] text-[15px] leading-6 text-white/65">
-              Electronic gadgets and accessories, tested in store and delivered across Ghana.
-            </p>
-            <p className="mt-5 text-[17px] font-semibold text-white">
-              <a href={site.phoneHref} className="transition-colors hover:text-white/75">{site.phoneDisplay}</a>
-            </p>
-            <p className="text-[13px] text-white/50">Call or WhatsApp · both shops</p>
-            <ul role="list" className="mt-5 flex flex-wrap gap-3">
-              {socials.map(s => (
+            <Logo />
+            <p className="mt-3 max-w-[28ch] text-[13px] leading-5 text-ink-soft">{site.tagline} Gadgets and accessories from two shops in Ghana.</p>
+            <ul role="list" className="mt-4 flex gap-2">
+              {[
+                { name: "TikTok", href: site.tiktok, icon: <TikTokIcon className="size-[17px]" /> },
+                { name: "WhatsApp", href: whatsappHref(), icon: <WhatsAppIcon className="size-[18px]" /> },
+              ].map(s => (
                 <li key={s.name}>
                   <a
                     href={s.href}
-                    target={s.name === "Call" ? undefined : "_blank"}
+                    target="_blank"
                     rel="noreferrer"
-                    aria-label={`${s.name}: ${s.label}`}
-                    className="press flex size-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white hover:text-ink"
+                    aria-label={`${site.name} on ${s.name}`}
+                    className="press flex size-11 items-center justify-center rounded-full bg-white text-ink transition-colors hover:bg-ink hover:text-white"
                   >
                     {s.icon}
                   </a>
@@ -44,45 +37,44 @@ export function Footer() {
             </ul>
           </div>
 
-          <nav aria-label="Shop">
-            <p className="text-[13px] font-semibold text-white/50">Shop</p>
-            <ul role="list" className="mt-3 grid grid-cols-2 gap-x-6 lg:grid-cols-1">
-              {shopLinks.map(link => (
-                <li key={link.name}>
-                  <Link href={link.href} className="inline-flex py-2 text-[15px] text-white/85 transition-colors hover:text-white">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <div className="grid grid-cols-2 gap-8 sm:contents">
+            <nav aria-label="Shop">
+              <h2 className="text-[13px] font-semibold text-ink">Shop</h2>
+              <ul role="list" className="mt-2">
+                {shopLinks.map(link => (
+                  <li key={link.name}>
+                    <Link href={link.href} className={linkClass}>{link.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-          <div>
-            <p className="text-[13px] font-semibold text-white/50">Visit us</p>
-            <ul role="list" className="mt-3">
-              {site.stores.map(store => (
-                <li key={store.name} className="py-2 text-[15px] leading-6 text-white/85">
-                  <span className="block font-medium text-white">{store.name}</span>
-                  {store.address}
-                </li>
-              ))}
-              <li>
-                <Link href="/orders" className="inline-flex py-2 text-[15px] text-white/85 transition-colors hover:text-white">
-                  Your orders
-                </Link>
-              </li>
-              <li>
-                <a href={whatsappHref()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 py-2 text-[15px] text-white/85 transition-colors hover:text-white">
-                  <WhatsAppIcon className="size-4" aria-hidden /> Chat on WhatsApp
-                </a>
-              </li>
-            </ul>
+            <div>
+              <h2 className="text-[13px] font-semibold text-ink">Visit</h2>
+              <ul role="list" className="mt-2 space-y-3">
+                {site.stores.map(store => (
+                  <li key={store.id} className="text-[13px] leading-5 text-ink-soft">
+                    <span className="block text-ink">{store.name}</span>
+                    {store.address}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="text-[13px] font-semibold text-ink">Help</h2>
+              <ul role="list" className="mt-2">
+                <li><a href={whatsappHref()} target="_blank" rel="noreferrer" className={linkClass}>Chat on WhatsApp</a></li>
+                <li><a href={site.phoneHref} className={linkClass}>Call {site.phoneDisplay}</a></li>
+                <li><Link href="/orders" className={linkClass}>Your orders</Link></li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-white/10 pt-6 text-[13px] text-white/50 sm:flex-row sm:justify-between">
-          <p>© {new Date().getFullYear()} {site.name} · {site.city}</p>
-          <p>Delivery nationwide · Mobile Money &amp; card</p>
+        <div className="flex flex-col gap-1 pt-5 text-[12px] leading-5 text-ink-soft sm:flex-row sm:justify-between">
+          <p>© {new Date().getFullYear()} {site.name}. {site.city}.</p>
+          <p>Pay with Mobile Money or card. Delivery nationwide.</p>
         </div>
       </div>
     </footer>

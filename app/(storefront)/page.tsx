@@ -1,178 +1,131 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, ShieldCheck, Store, Truck } from "lucide-react";
+import { MapPin, MessageCircle, Smartphone, Store, Truck } from "lucide-react";
 import { categories, categoryHref, editorial } from "@/data/categories";
 import { getProducts } from "@/lib/products";
 import { ProductCard } from "@/components/shared/product-card";
 import { ProductRail } from "@/components/shared/product-rail";
-import { ProductThumb } from "@/components/shared/product-thumb";
 import { SectionHeading } from "@/components/shared/section-heading";
-import { TikTokIcon } from "@/components/shared/social-icons";
-import { Hero } from "@/components/home/hero";
-import { site, whatsappHref } from "@/lib/config";
+import { ProductTile } from "@/components/home/hero";
+import { buttonClass } from "@/lib/button-class";
+import { minDeliveryFee, site, whatsappHref } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
-
-/** A promo tile: copy above, the product on its own colour field below. */
-function Promo({ eyebrow, title, text, href, action, src, alt, tint }: {
-  eyebrow: string; title: string; text: string; href: string; action: string; src: string; alt: string; tint: string;
-}) {
-  return (
-    <section className="relative overflow-hidden rounded-[26px] tint-media" style={{ "--tint": tint } as React.CSSProperties}>
-      <div className="flex flex-col items-start px-6 pt-8 sm:px-9 sm:pt-10">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-brand">{eyebrow}</p>
-        <h2 className="headline mt-2 text-[28px] text-ink sm:text-[36px]">{title}</h2>
-        <p className="mt-2 max-w-[38ch] text-[15px] leading-6 text-ink/70 sm:text-[16px]">{text}</p>
-        <Link href={href} className="press mt-4 inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
-          {action}
-          <ArrowRight className="size-4" aria-hidden />
-        </Link>
-      </div>
-      <Link href={href} aria-label={alt} className="press group relative mt-4 block aspect-[5/4]">
-        <Image src={src} alt={alt} data-studio="" fill sizes="(max-width: 1024px) 100vw, 50vw" quality={85} className="media-zoom object-contain p-[6%]" />
-      </Link>
-    </section>
-  );
-}
+import type { Product } from "@/types";
 
 export default async function HomePage() {
-  const all = await getProducts("all");
-  const store = all.filter(p => p.source !== "demo");
+  const store = (await getProducts("all")).filter(p => p.source !== "demo");
+  const bySlug = (slug: string) => store.find(p => p.slug === slug) as Product;
 
-  const newIn = store.filter(p => p.tags.includes("new")).slice(0, 6);
-  const newIds = new Set(newIn.map(p => p.id));
-  // Keep the second shelf from repeating the first: featured pieces first, then the rest.
-  const best = [
-    ...store.filter(p => p.tags.includes("featured") && !newIds.has(p.id)),
-    ...store.filter(p => !p.tags.includes("featured") && !newIds.has(p.id)),
+  const hero = bySlug(editorial.hero.slug);
+  const tiles = editorial.tiles.map(t => ({ ...t, product: bySlug(t.slug) }));
+  const wide = bySlug(editorial.wide.slug);
+
+  // Each product appears once on the page: tiles first, then the new shelf, then the picks.
+  const shown = new Set([hero, wide, ...tiles.map(t => t.product)].map(p => p.id));
+  const latest = store.filter(p => p.tags.includes("new") && !shown.has(p.id));
+  latest.forEach(p => shown.add(p.id));
+  const picks = [
+    ...store.filter(p => p.tags.includes("featured") && !shown.has(p.id)),
+    ...store.filter(p => !p.tags.includes("featured") && !shown.has(p.id)),
   ].slice(0, 8);
-  const bags = store.filter(p => p.category === "bags" && !newIds.has(p.id)).slice(0, 6);
 
   return (
     <>
-      <Hero
-        eyebrow={editorial.hero.eyebrow}
-        headline={editorial.hero.headline}
-        sub={editorial.hero.sub}
-        panels={editorial.hero.panels}
-      />
+      <ProductTile product={hero} title={editorial.hero.title} line={editorial.hero.line} tint={editorial.hero.tint} size="hero" preload />
 
-      {/* Shop by shelf */}
-      <nav aria-label="Shop by category" className="container-shell pt-8 sm:pt-12">
-        <ul role="list" className="hide-scrollbar -mx-5 flex snap-x gap-3 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-4 lg:overflow-visible lg:px-0">
+      {/* Shop by shelf: products float on white, Apple Store style. */}
+      <nav aria-label="Shop by category" className="pb-4 pt-8 sm:pt-12">
+        <ul role="list" className="rail hide-scrollbar flex snap-x gap-2 overflow-x-auto sm:gap-4 lg:justify-center lg:gap-8">
           {categories.map(c => (
-            <li key={c.id} className="shrink-0 snap-start lg:w-auto">
-              <Link href={categoryHref(c.id)} className="press group flex w-[92px] flex-col items-center gap-2.5 lg:w-full">
-                <ProductThumb src={c.image} tint={c.tint} cutout={c.cutout} sizes="(max-width: 1024px) 92px, 190px" className="media-zoom aspect-square w-full rounded-[22px]" />
-                <span className="text-center text-[13px] font-medium leading-4 text-ink sm:text-[14px]">{c.name}</span>
+            <li key={c.id} className="shrink-0 snap-start">
+              <Link href={categoryHref(c.id)} className="press group flex w-[88px] flex-col items-center gap-2 sm:w-[120px]">
+                <span className="relative block aspect-square w-full">
+                  <Image src={c.image} alt="" fill sizes="120px" className="object-contain p-[8%] transition-transform duration-500 ease-[var(--ease-out)] [@media(hover:hover)]:group-hover:scale-[1.06]" />
+                </span>
+                <span className="text-center text-[13px] font-medium leading-4 tracking-[-0.01em] text-ink sm:text-[14px]">{c.name}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      {/* New in */}
-      <section className="container-shell pt-12 sm:pt-16">
-        <SectionHeading title="New in" href="/shop?category=new" action="See all" />
-        <ProductRail products={newIn} />
-      </section>
-
-      {/* Two promos */}
-      <section className="container-shell grid gap-4 pt-12 sm:pt-16 lg:grid-cols-2">
-        {editorial.promos.map(p => <Promo key={p.href} {...p} />)}
-      </section>
-
-      {/* Feature band */}
-      <section className="mt-12 grid bg-[#22201f] sm:mt-16 md:grid-cols-2">
-        <div className="tint-media relative aspect-[4/3] md:aspect-auto md:min-h-[460px]" style={{ "--tint": "#F4EAE3" } as React.CSSProperties}>
-          <Image src={editorial.feature.src} alt={editorial.feature.alt} data-studio="" fill sizes="(max-width: 768px) 100vw, 50vw" quality={85} className="object-contain p-[9%]" />
-        </div>
-        <div className="flex flex-col items-start justify-center px-6 py-11 text-white sm:px-12 md:py-16 lg:px-14">
-          <h2 className="display text-[32px] sm:text-[40px] lg:text-[46px]">{editorial.feature.title}</h2>
-          <p className="mt-3 max-w-[36ch] text-[16px] leading-7 text-white/70 sm:text-[17px]">{editorial.feature.text}</p>
-          <Link href={editorial.feature.href} className="btn btn-light mt-7">
-            {editorial.feature.action}
-          </Link>
-        </div>
-      </section>
-
-      {/* Best sellers */}
-      <section className="mt-12 bg-mist py-12 sm:mt-16 sm:py-16">
+      {/* The latest */}
+      <section className="mt-6 bg-mist pb-8 pt-12 sm:mt-10 sm:pb-12 sm:pt-16">
         <div className="container-shell">
-          <SectionHeading title="Best sellers" href="/shop" action="Shop all" />
-          <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-y-10">
-            {best.map(product => <ProductCard key={product.id} product={product} />)}
+          <SectionHeading title="The latest." tone="New on the shelf." href="/shop?category=new" action="See all" />
+        </div>
+        <ProductRail products={latest} label="New on the shelf" />
+      </section>
+
+      {/* Product tiles: two up, then one wide. Apple's 12px gutters. */}
+      <div className="grid gap-3 pt-3 md:grid-cols-2 md:px-3">
+        {tiles.map(t => (
+          <ProductTile key={t.slug} product={t.product} title={t.title} line={t.line} tint={t.tint} size="half" />
+        ))}
+        <div className="md:col-span-2">
+          <ProductTile product={wide} title={editorial.wide.title} line={editorial.wide.line} tint={editorial.wide.tint} size="wide" />
+        </div>
+      </div>
+
+      {/* Top picks */}
+      <section className="mt-3 bg-mist py-14 sm:py-20">
+        <div className="container-shell">
+          <SectionHeading title="Top picks." tone="Straight from the shop shelf." href="/shop" action="Shop all" />
+          {/* Eight cards: two or four across, so no row is ever left half full. */}
+          <ul role="list" className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
+            {picks.map(product => (
+              <li key={product.id}>
+                <ProductCard product={product} />
+              </li>
+            ))}
+          </ul>
+          <div className="mt-10 flex justify-center">
+            <Link href="/shop" className={buttonClass({ variant: "outline" })}>
+              Shop all {store.length} gadgets
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Bags rail */}
-      <section className="container-shell py-12 sm:py-16">
-        <SectionHeading title="Bags that carry it all" href="/shop?category=bags" action="Shop bags" />
-        <ProductRail products={bags} />
-      </section>
+      {/* Two shops, one promise each. Facts only: fees, times and addresses from lib/config. */}
+      <section aria-labelledby="shops-title" className="container-shell py-14 sm:py-20">
+        <h2 id="shops-title" className="headline text-[28px] text-ink sm:text-[40px]">
+          Two shops. <span className="text-ink-soft">And delivery across Ghana.</span>
+        </h2>
+        <ul role="list" className="mt-8 grid gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: Store, title: "Free pickup", text: "Ready in 2 hours at either shop." },
+            { icon: Truck, title: "Delivery nationwide", text: `Same or next day in Koforidua and Kasoa, from ${formatPrice(minDeliveryFee)}.` },
+            { icon: Smartphone, title: "Mobile Money or card", text: "MTN MoMo, Telecel Cash, AirtelTigo, Visa and Mastercard." },
+            { icon: MessageCircle, title: "Ask a real person", text: `WhatsApp or call ${site.phoneDisplay}.`, href: whatsappHref("Hi Comfy Connects, I have a question about a gadget.") },
+          ].map(({ icon: Icon, title, text, href }) => (
+            <li key={title} className="flex gap-4 sm:flex-col sm:gap-3">
+              <Icon className="size-7 shrink-0 stroke-[1.5] text-brand" aria-hidden />
+              <div>
+                <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-ink">
+                  {href ? (
+                    <a href={href} target="_blank" rel="noreferrer" className="hover:underline">{title}</a>
+                  ) : title}
+                </h3>
+                <p className="mt-1 max-w-[32ch] text-[15px] leading-[1.45] text-ink-soft">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-      {/* Visit us: the two shops, with the pickup promise */}
-      <section className="container-shell pb-12 sm:pb-16">
-        <div className="grid gap-4 rounded-[28px] bg-mist p-6 sm:p-8 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-10 lg:p-10">
-          <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-brand">Two shops</p>
-            <h2 className="headline mt-2 text-[28px] text-ink sm:text-[34px]">See it. Hold it. Buy it.</h2>
-            <p className="mt-2 max-w-[38ch] text-[15px] leading-6 text-ink/70">
-              Every gadget is on the shelf at both shops. Collect in about two hours, or have it delivered.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <a href={whatsappHref("Hi Comfy Connects, I'd like to ask about a gadget.")} target="_blank" rel="noreferrer" className="btn btn-primary">
-                <MessageCircle className="size-4" aria-hidden /> Ask on WhatsApp
-              </a>
-              <a href={site.tiktok} target="_blank" rel="noreferrer" className="btn btn-outline">
-                <TikTokIcon className="size-4" aria-hidden /> {site.tiktokFollowers} on TikTok
-              </a>
-            </div>
-            <p className="mt-5 text-[15px] text-ink/70">
-              Call or WhatsApp{" "}
-              <a href={site.phoneHref} className="font-semibold text-ink underline decoration-line underline-offset-4 hover:decoration-ink">
-                {site.phoneDisplay}
-              </a>
-            </p>
-          </div>
-          <ul role="list" className="grid gap-3 sm:grid-cols-2">
-            {site.stores.map(store2 => (
-              <li key={store2.id} className="rounded-[20px] bg-white p-5">
-                <span className="flex size-10 items-center justify-center rounded-full bg-brand-soft">
-                  <Store className="size-[18px] stroke-[1.7] text-ink" aria-hidden />
-                </span>
-                <p className="mt-3 text-[17px] font-semibold text-ink">{store2.name}</p>
-                <p className="mt-0.5 text-[14px] leading-5 text-ink/70">{store2.address}</p>
-                <p className="mt-1 text-[13px] text-ink/50">{store2.area}</p>
-                <p className="mt-3 text-[13px] font-medium text-ink">Pickup ready in 2 hours</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Reassurance strip */}
-      <section aria-label="Shopping with us" className="border-t border-line">
-        <div className="container-shell py-10 sm:py-12">
-          <ul role="list" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { icon: Truck, title: "Delivery nationwide", text: `From ${formatPrice(2000)} in Koforidua and Kasoa.` },
-              { icon: Store, title: "Free pickup", text: "Collect from either shop in two hours." },
-              { icon: ShieldCheck, title: "Checked before it ships", text: "Every unit is tested in store." },
-              { icon: MessageCircle, title: "A real person on WhatsApp", text: `Ask about stock or a fitting on ${site.phoneDisplay}.` },
-            ].map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex items-start gap-3.5">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-mist">
-                  <Icon className="size-[18px] stroke-[1.7] text-ink" aria-hidden />
-                </span>
-                <span>
-                  <span className="block text-[15px] font-semibold text-ink">{title}</span>
-                  <span className="mt-0.5 block text-[14px] leading-5 text-ink/60">{text}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul role="list" className="mt-10 grid gap-3 sm:mt-12 sm:grid-cols-2">
+          {site.stores.map(s => (
+            <li key={s.id} className="flex items-center gap-4 rounded-[18px] bg-mist p-5 sm:p-6">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white">
+                <MapPin className="size-5 stroke-[1.6] text-ink" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[17px] font-semibold tracking-[-0.015em] text-ink">{s.name}</p>
+                <p className="text-[15px] text-ink-soft">{s.address}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
     </>
   );

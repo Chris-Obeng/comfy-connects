@@ -6,6 +6,11 @@ import { cn } from "@/lib/utils";
 
 const soldOut = (p: Product) => p.sizes.every(s => s.stock === 0);
 
+/**
+ * Apple Store / Beats shelf card: a white tile on the grey field. The studio shot floats on
+ * white (its own sweep), with "New" in the logo red, the name, the price and colour dots.
+ * The whole tile is one link; hover swaps to the second shot on pointer devices.
+ */
 export function ProductCard({
   product,
   preload = false,
@@ -18,13 +23,12 @@ export function ProductCard({
   const isSoldOut = soldOut(product);
   const isNew = product.tags.includes("new");
   const href = `/product/${product.slug}`;
-  const fit = product.cutout ? "object-contain p-[8%]" : "object-cover object-[50%_20%]";
+  const fit = product.cutout ? "object-contain p-[10%]" : "object-cover object-[50%_20%]";
+  const status = isSoldOut ? "Sold out" : product.compareAtPrice ? "Sale" : isNew ? "New" : null;
+
   return (
-    <article className="group relative min-w-0">
-      <div
-        className="card-media tint-media relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-200 ease-[var(--ease-out)] group-active:scale-[0.98]"
-        style={{ "--tint": product.tint } as React.CSSProperties}
-      >
+    <article className="product-card group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[18px] bg-white">
+      <div className="card-media relative aspect-square">
         <Image
           src={product.images[0]}
           alt=""
@@ -32,41 +36,45 @@ export function ProductCard({
           fill
           preload={preload}
           sizes={sizes}
-          className={cn(fit, product.cutout && "transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04]")}
+          className={cn(fit, "transition-transform duration-700 ease-[var(--ease-out)] [@media(hover:hover)]:group-hover:scale-[1.03]")}
         />
         {product.images[1] && (
           <Image
             src={product.images[1]}
             alt=""
             data-secondary
-            data-studio={product.cutout ? "" : undefined}
+            data-studio=""
             fill
             preload={false}
             sizes={sizes}
-            className={cn(fit, "opacity-0")}
+            className={cn(fit, "bg-white opacity-0")}
           />
         )}
-        {(product.compareAtPrice || isSoldOut) && (
-          <span className="absolute left-3 top-3 rounded-md bg-white/90 px-2 py-1 text-[12px] leading-none text-ink">
-            {isSoldOut ? "Sold out" : "Sale"}
-          </span>
-        )}
       </div>
-      <div className="px-1 pt-3.5">
-        {isNew && <p className="mb-1 text-[12px] font-bold uppercase tracking-[0.04em] text-brand">New</p>}
-        <h3 className="text-[16px] font-semibold leading-5 text-ink">
-          <Link href={href} className="after:absolute after:inset-0 after:rounded-[22px] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-brand">
+
+      <div className="flex flex-1 flex-col px-4 pb-5 pt-1 sm:px-5 sm:pb-6">
+        {product.colors.length > 1 && (
+          <ul role="list" aria-label={`${product.colors.length} colours`} className="mb-3 flex gap-1.5">
+            {product.colors.map(c => (
+              <li key={c.name} title={c.name} className="size-2.5 rounded-full ring-1 ring-inset ring-black/15" style={{ backgroundColor: c.hex }} />
+            ))}
+          </ul>
+        )}
+        {status && (
+          <p className={cn("mb-1 text-[12px] font-medium", isSoldOut ? "text-ink-soft" : "text-brand")}>{status}</p>
+        )}
+        <h3 className="text-[15px] font-semibold leading-[1.25] tracking-[-0.015em] text-ink sm:text-[16px]">
+          <Link
+            href={href}
+            className="after:absolute after:inset-0 after:rounded-[18px] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-brand"
+          >
             {product.name}
           </Link>
         </h3>
-        <p className="mt-1.5 text-[15px] tabular-nums">
-          {product.compareAtPrice ? (
-            <>
-              <span className="font-medium text-sale">{formatPrice(product.price)}</span>{" "}
-              <s className="text-ink-faint">{formatPrice(product.compareAtPrice)}</s>
-            </>
-          ) : (
-            <span className="text-ink">{formatPrice(product.price)}</span>
+        <p className="mt-1.5 text-[14px] tabular-nums sm:text-[15px]">
+          <span className={product.compareAtPrice ? "text-brand" : "text-ink"}>{formatPrice(product.price)}</span>
+          {product.compareAtPrice && (
+            <s className="ml-1.5 text-ink-soft">{formatPrice(product.compareAtPrice)}</s>
           )}
         </p>
       </div>

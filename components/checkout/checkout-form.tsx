@@ -25,7 +25,7 @@ import type { CartItem, Order } from "@/types";
  * error below with an icon, aria wired.
  * ---------------------------------------------------------------------------------------------- */
 const fieldBase =
-  "scroll-mt-28 h-[52px] w-full rounded-2xl border bg-white px-4 text-[16px] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-ink focus:ring-4 focus:ring-ink/8";
+  "scroll-mt-28 h-[52px] w-full rounded-[12px] border bg-white px-4 text-[16px] text-ink outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-ink focus:ring-4 focus:ring-ink/8";
 
 function Field({
   label,
@@ -123,9 +123,9 @@ function BranchCard({ register, id, name, address, area }: { register: UseFormRe
 function Section({ title, children, aside }: { title: string; children: React.ReactNode; aside?: React.ReactNode }) {
   const id = useId();
   return (
-    <section aria-labelledby={id} className="rounded-[28px] bg-white p-5 sm:p-7">
+    <section aria-labelledby={id} className="rounded-[20px] bg-white p-5 sm:p-7">
       <div className="mb-5 flex items-baseline justify-between gap-3">
-        <h2 id={id} className="text-[22px] font-semibold tracking-[-0.02em] text-ink">{title}</h2>
+        <h2 id={id} className="text-[21px] font-semibold tracking-[-0.022em] text-ink">{title}</h2>
         {aside}
       </div>
       {children}
@@ -252,10 +252,10 @@ export function CheckoutForm() {
         <div className="mx-auto grid max-w-[1080px] gap-6 lg:grid-cols-[1fr_400px]">
           <div className="space-y-4">
             <Skeleton className="h-10 w-48 rounded-xl bg-white" />
-            <Skeleton className="h-64 w-full rounded-[28px] bg-white" />
-            <Skeleton className="h-80 w-full rounded-[28px] bg-white" />
+            <Skeleton className="h-64 w-full rounded-[20px] bg-white" />
+            <Skeleton className="h-80 w-full rounded-[20px] bg-white" />
           </div>
-          <Skeleton className="hidden h-96 w-full rounded-[28px] bg-white lg:block" />
+          <Skeleton className="hidden h-96 w-full rounded-[20px] bg-white lg:block" />
         </div>
       </div>
     );
@@ -273,7 +273,7 @@ export function CheckoutForm() {
     return (
       <div className="container-shell flex flex-1 flex-col py-10">
         <h1 className="sr-only">Checkout</h1>
-        <div className="mx-auto flex w-full max-w-[560px] flex-1 flex-col rounded-[28px] bg-white">
+        <div className="mx-auto flex w-full max-w-[560px] flex-1 flex-col rounded-[20px] bg-white">
           <EmptyBag />
         </div>
       </div>
@@ -296,7 +296,7 @@ export function CheckoutForm() {
         </div>
 
         {/* Phones: collapsible order summary */}
-        <div className="mt-5 overflow-hidden rounded-[24px] bg-white lg:hidden">
+        <div className="mt-5 overflow-hidden rounded-[20px] bg-white lg:hidden">
           <button
             type="button"
             onClick={() => setSummaryOpen(o => !o)}
@@ -436,8 +436,8 @@ export function CheckoutForm() {
           </form>
 
           {/* Desktop: sticky summary */}
-          <aside aria-label="Order summary" className="sticky top-[92px] hidden rounded-[28px] bg-white p-7 lg:block">
-            <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">Your order</h2>
+          <aside aria-label="Order summary" className="sticky top-[76px] hidden rounded-[20px] bg-white p-7 lg:block">
+            <h2 className="text-[21px] font-semibold tracking-[-0.022em] text-ink">Your order</h2>
             <div className="-mx-2 mt-3 max-h-[360px] overflow-y-auto px-2 pt-2">
               <SummaryItems items={items} />
             </div>

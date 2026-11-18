@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "en_GH",
     type: "website",
-    images: [{ url: editorial.hero.panels[0].src, width: 1024, height: 1024, alt: editorial.hero.panels[0].alt }],
+    images: [{ url: editorial.share.src, width: 1100, height: 1100, alt: editorial.share.alt }],
   },
   twitter: {
     card: "summary_large_image",
@@ -40,6 +40,7 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
   colorScheme: "light",
   themeColor: "#ffffff",
+  // Keep pinch-zoom available: never set maximumScale.
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

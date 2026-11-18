@@ -133,7 +133,7 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
                 type="button"
                 tabIndex={-1}
                 onClick={() => goTo(i)}
-                className={cn("h-2 rounded-full transition-[width,background-color] duration-300 ease-[var(--ease-out)]", active === i ? "w-6 bg-ink" : "w-2 bg-ink/20")}
+                className={cn("size-2 rounded-full transition-colors duration-300", active === i ? "bg-ink" : "bg-ink/20")}
               />
             ))}
           </div>
@@ -146,7 +146,7 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
           type="button"
           onClick={() => setViewer(active)}
           aria-label="Open image full screen"
-          className={cn("tint-media group relative block w-full cursor-zoom-in overflow-hidden rounded-[28px]", frame(cutout))}
+          className={cn("tint-media group relative block w-full cursor-zoom-in overflow-hidden rounded-[24px]", frame(cutout))}
           style={style}
         >
           <Image
@@ -163,7 +163,7 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
             <Expand className="size-4" aria-hidden />
           </span>
         </button>
-        <div className="mt-3 flex flex-wrap gap-2">
+        {images.length > 1 && <div className="mt-4 flex flex-wrap justify-center gap-2.5">
           {images.map((src, i) => (
             <button
               key={src}
@@ -172,15 +172,15 @@ export function ProductGallery({ images, name, tint, cutout }: Props) {
               aria-label={`Show image ${i + 1}`}
               aria-pressed={active === i}
               className={cn(
-                "tint-media press relative size-[76px] shrink-0 overflow-hidden rounded-xl",
-                active === i ? "ring-2 ring-ink ring-offset-2" : "opacity-70 hover:opacity-100"
+                "tint-media press relative size-16 shrink-0 overflow-hidden rounded-[12px] transition-opacity duration-200",
+                active === i ? "ring-[1.5px] ring-ink ring-offset-2" : "opacity-60 hover:opacity-100"
               )}
               style={style}
             >
-              <Image src={src} alt="" data-studio={studio(cutout, i)} fill loading="eager" sizes="90px" className={cutout ? "object-contain p-1.5" : "object-cover object-[50%_20%]"} />
+              <Image src={src} alt="" data-studio={studio(cutout, i)} fill loading="eager" sizes="64px" className={cutout ? "object-contain p-1.5" : "object-cover object-[50%_20%]"} />
             </button>
           ))}
-        </div>
+        </div>}
       </div>
 
       {viewer !== null && (

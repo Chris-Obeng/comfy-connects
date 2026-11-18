@@ -44,7 +44,7 @@ export function OrdersList() {
         <li key={order.id}>
           <Link
             href={`/orders/${order.id}`}
-            className="group block rounded-2xl border border-line bg-white p-5 transition-colors hover:border-ink/40 sm:p-6"
+            className="group block rounded-[18px] bg-mist p-5 transition-colors hover:bg-[#ededf0] sm:p-6"
           >
             <div className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-baseline gap-3">
@@ -53,7 +53,7 @@ export function OrdersList() {
                   <p className="shrink-0 text-xs text-ink-faint">{formatOrderDate(order.createdAt)}</p>
                 ) : null}
               </div>
-              <span className="flex shrink-0 items-center gap-1 rounded-full bg-mist px-3 py-1 text-xs text-ink-soft">
+              <span className="flex shrink-0 items-center gap-1 rounded-full bg-white px-3 py-1 text-xs text-ink-soft">
                 Processing
                 <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </span>
@@ -63,7 +63,7 @@ export function OrdersList() {
                 {order.items.slice(0, 4).map(item => (
                   <span
                     key={item.key}
-                    className="tint-media relative size-12 shrink-0 overflow-hidden rounded-full border-2 border-white"
+                    className="tint-media relative size-12 shrink-0 overflow-hidden rounded-full border-2 border-mist"
                     style={{ "--tint": item.tint } as React.CSSProperties}
                     aria-hidden
                   >
@@ -71,7 +71,7 @@ export function OrdersList() {
                   </span>
                 ))}
                 {order.items.length > 4 && (
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-mist text-[11px] font-medium text-ink-soft">
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-mist bg-mist text-[11px] font-medium text-ink-soft">
                     +{order.items.length - 4}
                   </span>
                 )}
