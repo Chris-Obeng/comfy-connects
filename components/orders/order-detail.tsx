@@ -130,7 +130,7 @@ export function OrderDetail({ id, placed = false }: { id: string; placed?: boole
                 : `In store, ${site.location}`
               : [order.delivery.address, order.delivery.area, order.delivery.city, order.delivery.region].filter(Boolean).join(", ")}
           </p>
-          {order.delivery.eta && <p className="mt-0.5 text-sm text-ink-soft">{isPickup ? order.delivery.eta : `Arrives ${order.delivery.eta.toLowerCase()}`}</p>}
+          {!isPickup && order.delivery.eta && <p className="mt-0.5 text-sm text-ink-soft">{`Arrives ${order.delivery.eta.toLowerCase()}`}</p>}
           {order.delivery.notes && <p className="mt-1 text-sm leading-6 text-ink-soft">{order.delivery.notes}</p>}
         </div>
         <div>

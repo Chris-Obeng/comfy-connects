@@ -94,7 +94,7 @@ export default async function HomePage() {
         </h2>
         <ul role="list" className="mt-8 grid gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-3">
           {[
-            { icon: Store, title: "Free pickup", text: "Ready in 2 hours at either shop." },
+            { icon: Store, title: "Free pickup", text: "Collect from either shop." },
             { icon: Truck, title: "Delivery nationwide", text: `Same or next day in Koforidua and Kasoa, from ${formatPrice(minDeliveryFee)}.` },
             { icon: Smartphone, title: "Mobile Money or card", text: "MTN MoMo, Telecel Cash, AirtelTigo, Visa and Mastercard." },
           ].map(({ icon: Icon, title, text }) => (

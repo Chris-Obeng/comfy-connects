@@ -73,7 +73,6 @@ export const regions = [
 
 export const pickup = {
   label: `Pick up free, ${site.stores.map(s => s.name).join(" or ")}`,
-  eta: "Ready in 2 hours",
 };
 
 /** The shop a pickup order is collected from. */
