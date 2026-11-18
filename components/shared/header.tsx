@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { ChevronRight, Menu, Search, ShoppingBag } from "lucide-react";
+import { ChevronRight, Menu, Package, Search, ShoppingBag } from "lucide-react";
 import { Drawer } from "@heroui/react";
 import { SearchDialog, useSearchShortcut } from "@/components/shared/search-dialog";
 import { Logo } from "@/components/shared/logo";
@@ -133,14 +133,20 @@ export function Header({ searchItems }: { searchItems: SearchItem[] }) {
                       <ChevronRight className="size-5 text-ink-faint transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
                     </Link>
                   ))}
-                  <div className="mt-6 border-t border-hairline pt-4">
-                    <Link href="/orders" onClick={() => setMenu(false)} className="flex min-h-11 items-center text-[15px] text-ink-soft hover:text-ink">
-                      Your orders
-                    </Link>
-                    <a href={site.phoneHref} className="flex min-h-11 items-center text-[15px] text-ink-soft hover:text-ink">
-                      Call {site.phoneDisplay}
-                    </a>
-                  </div>
+                  <Link
+                    href="/orders"
+                    onClick={() => setMenu(false)}
+                    className="press group mt-6 flex min-h-16 items-center gap-3.5 rounded-[18px] bg-mist px-4 transition-colors hover:bg-hairline"
+                  >
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+                      <Package className="size-5 stroke-[1.7]" aria-hidden />
+                    </span>
+                    <span className="flex-1 text-[17px] font-semibold tracking-[-0.015em] text-ink">Your orders</span>
+                    <ChevronRight className="size-5 text-ink-soft transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+                  </Link>
+                  <a href={site.phoneHref} className="mt-2 flex min-h-11 items-center text-[15px] text-ink-soft hover:text-ink">
+                    Call {site.phoneDisplay}
+                  </a>
                 </nav>
                 <div className="safe-bottom mt-auto flex gap-2 px-5 pt-8">
                   <a href={whatsappHref()} target="_blank" rel="noreferrer" className="btn btn-soft h-12 flex-1">
